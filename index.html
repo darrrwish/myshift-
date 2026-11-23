@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EAEFF6">
 <title>المِحوَر</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="المحور">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap" rel="stylesheet">
@@ -527,6 +532,77 @@ body.reels{overflow:hidden}
   #vReels .ath-side button{width:44px;height:44px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);color:#fff}
   #vReels .ath-side button:hover{background:#fff;color:#111}
 }
+/* v5 additions follow the existing monochrome controls. */
+.v5-kicker{display:block;color:var(--mu);font-size:11px;font-weight:600;letter-spacing:0;margin-bottom:5px}
+.v5-capture{padding:20px 16px;border:1px solid var(--ln);border-radius:20px}
+.v5-capture h2{font-size:24px;margin:0 0 6px}
+.v5-capture .ks{line-height:1.8}
+.v5-capture .fl small{font-size:11px;font-weight:400;color:var(--mu)}
+.v5-types{margin:16px 0;display:flex;gap:6px;flex-wrap:wrap}
+.v5-types button{flex:1;min-height:42px;border:1px solid var(--ln);border-radius:12px;background:var(--sf);padding:7px 8px;font-size:12px;white-space:nowrap;cursor:pointer}
+.v5-types button.sel{background:var(--pri);color:var(--pon);border-color:var(--pri)}
+.v5-bookpick{display:flex;gap:7px;align-items:stretch;margin-top:6px}
+.v5-bookpick .ksel{flex:1;min-width:0;margin:0}
+.v5-bookpick .btn{width:auto;flex:none;padding:0 10px;font-size:11px;border:1px solid var(--ln)}
+.v5-sourcehint{font-size:11px;margin:7px 0 0}
+.v5-extra{border-top:1px solid var(--ln);margin-top:16px;padding-top:12px}
+.v5-extra summary{cursor:pointer;font-size:12px;line-height:1.8;color:var(--mu)}
+.v5-session{padding:12px 2px;margin-top:16px}
+.v5-session>.card{margin-top:12px;border:1px solid var(--ln)}
+.v5-prompts{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.v5-prompts button{border:1px solid var(--ln);border-radius:10px;background:var(--sf);font-size:11px;padding:7px 9px;cursor:pointer}
+.v5-group{margin:20px 0 0;padding-top:10px;border-top:1px solid var(--ln)}
+.v5-grouphead{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.v5-grouphead h3{font-size:16px;margin:4px 0}
+.v5-grouphead h3 small{font-size:12px;font-weight:400;color:var(--mu)}
+.v5-link{color:var(--ink);font-size:12px;text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:4px 0;cursor:pointer;line-height:1.8}
+.v5-note{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:12px 14px;margin:10px 0;overflow-wrap:anywhere}
+.v5-note h3{font-size:14px;line-height:1.8;margin:8px 0}
+.v5-note p{white-space:pre-wrap;line-height:1.9;margin:4px 0 8px;font-size:14px}
+.v5-note small{font-size:11px;color:var(--mu)}
+.v5-note .v5-link{display:block;margin-top:6px}
+.v5-small{display:block;font-size:11px;color:var(--mu);margin-top:5px}
+.v5-opennotebook{margin:10px 0 2px;border:1px solid var(--ln);font-size:12px;min-height:40px}
+.ath-bg .gl.v5-bulb{width:82%;height:82%;font-size:inherit;white-space:normal;color:#fff;opacity:.075;top:49%;transform:translate(-50%,-50%)}
+.v5-follow{font:inherit;font-size:12px;font-weight:600;line-height:1.6;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:99px;padding:7px 14px;cursor:pointer;margin-top:9px}
+.v5-follow[aria-pressed=true]{background:#fff;color:#15181c}
+.v5-faselhead{padding:8px 4px 12px}
+.v5-faselhead h2{font-size:28px;margin:0;line-height:1.4}
+.v5-faselhead p{margin:4px 0 0}
+.v5-quiz{border:1px solid var(--ln);border-radius:22px;padding:20px 16px;margin-bottom:30px;overflow-wrap:anywhere}
+.v5-quizintro{text-align:center;padding:20px 0 8px}
+.v5-quizmark{width:68px;height:68px;display:grid;place-items:center;background:var(--pri);color:var(--pon);border-radius:22px;margin:0 auto 24px;font-size:42px;line-height:1}
+.v5-quizintro h2{font-size:23px;margin:8px 0}
+.v5-quizintro p{font-size:14px;line-height:2;margin:8px 0 26px;color:var(--mu)}
+.v5-quizintro small{display:block;font-size:11px;line-height:1.9;color:var(--mu);margin:14px 0 0}
+.v5-quiztop{display:flex;justify-content:space-between;gap:10px;color:var(--mu);font-size:12px}
+.v5-progress{height:4px;direction:rtl;overflow:hidden;border-radius:4px;background:var(--ln);margin-top:12px}
+.v5-progress i{display:block;height:100%;background:var(--ink);transition:width .2s}
+.v5-question{font-size:21px;line-height:1.9;margin:24px 0 20px;font-weight:600}
+.v5-options{display:grid;gap:9px}
+.v5-option{display:flex;align-items:center;gap:10px;text-align:start;width:100%;border:1px solid var(--ln);border-radius:14px;background:var(--sf);color:var(--ink);padding:12px;min-height:58px;cursor:pointer;font-size:14px;line-height:1.8}
+.v5-option>span{width:28px;height:28px;flex:none;display:grid;place-items:center;border-radius:8px;background:var(--bg);font-size:12px}
+.v5-option b{font-weight:500}
+.v5-option em{font-style:normal;margin-inline-start:auto;font-size:18px}
+.v5-option:disabled{opacity:.6;cursor:default}
+.v5-option.correct{border:2px solid var(--ink);padding:11px;opacity:1;background:var(--bg)}
+.v5-option.wrong{border-style:dashed;opacity:.85}
+.v5-option.wrong b{text-decoration:line-through;text-decoration-thickness:1px}
+.v5-feedback{border-inline-start:3px solid var(--ink);padding:2px 12px;margin:20px 0;outline:none}
+.v5-feedback b{font-size:14px}
+.v5-feedback p{font-size:13px;line-height:1.9;margin:8px 0}
+.v5-feedback .v5-link{font-size:11px}
+.v5-quizhint{text-align:center;margin:16px 0 2px;font-size:11px}
+.v5-result{text-align:center;padding:16px 0 20px}
+.v5-result h2{font-size:62px;line-height:1.4;margin:8px 0}
+.v5-result h2 small{font-size:18px;font-weight:400;color:var(--mu)}
+.v5-result p{font-size:14px;line-height:1.9;color:var(--mu);margin:6px 0 22px}
+.v5-review{border-top:1px solid var(--ln);padding-top:16px}
+.v5-review summary{font-size:14px;cursor:pointer}
+@media(max-width:350px){.v5-capture{padding:16px 12px}.v5-types{gap:4px}.v5-types button{font-size:11px;padding:7px 5px}.v5-bookpick{flex-wrap:wrap}.v5-bookpick .btn{min-height:36px}.v5-question{font-size:19px}.v5-quiz{padding:16px 12px}#nav{padding:0 10px}#nav button.sel{padding:0 10px}#nav .fab{width:48px;height:48px;min-width:48px}}
+
+.v5-capture textarea,#answerSheet textarea{font:inherit;line-height:1.9}
+
 </style>
 </head>
 <body>
@@ -551,8 +627,30 @@ body.reels{overflow:hidden}
   </section>
   </div>
   <div id="vAdd" hidden>
+    <section class="card v5-capture">
+      <span class="v5-kicker">من كتابك للحظة تفتكرها</span>
+      <h2 class="kh">عايز تحفظ إيه؟</h2>
+      <p class="ks" id="captureHint"></p>
+      <div class="chips v5-types" id="kch" role="group" aria-label="نوع اللي هتحفظه"></div>
+      <label class="fl" for="kt" id="captureTextLabel">الاقتباس اللي عجبك</label>
+      <textarea class="kt" id="kt" rows="5" style="min-height:132px;margin-top:6px"></textarea>
+      <div id="questionPrompts" hidden><p class="ks">ممكن تبدأ بسؤال زي:</p><div class="v5-prompts"><button type="button">أنا مقتنع بالفكرة دي ليه؟</button><button type="button">إمتى الفكرة دي ما تنفعش؟</button></div></div>
+      <div id="planWrap" hidden><label class="fl" for="kplan">أول خطوة هتجربها (اختياري)</label><textarea class="kt" id="kplan" placeholder="خطوة صغيرة وواضحة تعملها إزاي؟" rows="2" style="min-height:70px;margin-top:6px"></textarea></div>
+      <label class="fl" for="kbs">الكتاب المصدر <small>اختياري</small></label>
+      <div class="v5-bookpick"><select class="ksel" id="kbs" aria-label="الكتاب المصدر"></select><button class="btn" type="button" id="captureBookNew">+ كتاب جديد</button></div>
+      <p class="ks v5-sourcehint">لو مش من كتاب، احفظه كملاحظة شخصية. مش محتاج تملأ جلسة كاملة.</p>
+      <details class="v5-extra"><summary>تفاصيل وأنواع إضافية (اختياري)</summary>
+        <input class="kin" id="kti" placeholder="عنوان مختصر (اختياري)" maxlength="80">
+        <select class="ksel" id="captureOther" aria-label="أنواع إضافية"><option value="">الأنواع الأساسية فوق</option><option value="idea">فكرة للتأمل</option><option value="concept">مفهوم عايز أفهمه</option></select>
+        <input class="kin" id="kfd" placeholder="المجال (مثلاً: علم النفس)" maxlength="40" hidden>
+        <input class="kin" id="kxm" placeholder="مثال يوضّح المفهوم" maxlength="160" hidden>
+      </details>
+      <button class="btn pri" id="ksv" type="button" style="margin-top:16px">احفظ في أثر</button>
+      <p class="msg" id="captureMessage" role="status"></p>
+    </section>
+    <details class="v5-extra v5-session"><summary>عايز تسجّل جلسة كاملة؟</summary>
     <section class="card">
-      <h2 class="kh">سجّل جلسة</h2><p class="ks">بعد كل جلسة استماع أو قراءة. كل خانة بتتحول لبطاقة في صفحة «أثر».</p>
+      <h2 class="kh">جلسة قراءة بالتفصيل</h2><p class="ks">بعد كل جلسة استماع أو قراءة. هنحفظها كجلسة، ونطلع منها بطاقات في «أثر».</p>
       <select class="ksel" id="sbk" aria-label="الكتاب" style="margin-top:0"></select>
       <input class="kin" id="sid" placeholder="الفكرة (مثلاً: تأثير البلاسيبو والنوسيبو)" maxlength="120">
       <textarea class="kt" id="sq" placeholder="أهم اقتباس" style="min-height:64px;margin-top:8px"></textarea>
@@ -561,16 +659,11 @@ body.reels{overflow:hidden}
       <button class="btn pri" id="ssv" type="button" style="margin-top:12px">حفظ الجلسة</button>
       <p class="msg" id="smsg" role="status"></p>
     </section>
-    <section class="card" style="margin-top:14px">
-      <h2 class="kh">التقاط سريع</h2><p class="ks">فكرة أو مفهوم أو سؤال في 30 ثانية</p>
-      <div class="chips" id="kch" style="margin-top:0"></div>
-      <input class="kin" id="kti" placeholder="العنوان" maxlength="80" style="margin-top:0">
-      <input class="kin" id="kfd" placeholder="المجال (مثلاً: علم النفس)" maxlength="40" hidden>
-      <textarea class="kt" id="kt" placeholder="التفاصيل" style="min-height:64px;margin-top:8px"></textarea>
-      <input class="kin" id="kxm" placeholder="مثال يوضّح المفهوم" maxlength="160" hidden>
-      <select class="ksel" id="kbs" aria-label="الكتاب المصدر"></select>
-      <button class="btn pri" id="ksv" type="button" style="margin-top:10px">حفظ</button>
-    </section>
+    </details>
+  </div>
+  <div id="vFasel" hidden>
+    <header class="v5-faselhead"><span class="v5-kicker">خد لك فاصل</span><h2>فاصل</h2><p class="ks">ذكاء ومعلومات، على مهلك.</p></header>
+    <section class="card v5-quiz" id="quizBody" aria-live="polite"></section>
   </div>
   <div id="vNews" hidden>
     <h2 class="kh nh">الأخبار</h2>
@@ -601,6 +694,7 @@ body.reels{overflow:hidden}
   <div class="np">
     <button type="button" data-v="s" class="sel" aria-label="الرئيسية"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>الرئيسية</span></button>
     <button type="button" data-v="r" aria-label="أثر: قصص معرفية"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="4"/><path d="M10 9.5l5 3-5 3z"/></svg><span>أثر</span></button>
+    <button type="button" data-v="f" aria-label="فاصل: فوازير باختيارات"><svg viewBox="0 0 24 24"><path d="M9 6a3 3 0 0 1 6 1c0 2-3 2-3 5"/><path d="M12 16h.01"/><rect x="3" y="2" width="18" height="20" rx="6"/></svg><span>فاصل</span></button>
     <button type="button" data-v="n" aria-label="الأخبار"><svg viewBox="0 0 24 24"><path d="M5 5h11v14H7a2 2 0 0 1-2-2zM16 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/></svg><span>الأخبار</span></button>
   </div>
   <button type="button" data-v="a" class="fab" aria-label="تسجيل"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -618,7 +712,7 @@ body.reels{overflow:hidden}
   <button class="btn dn" id="nsC" type="button">إغلاق</button>
 </div>
 <div class="sheet" id="bookSheet" role="dialog" aria-modal="true" hidden>
-  <div class="grip"></div><h2>إضافة كتاب</h2>
+  <div class="grip"></div><h2>إضافة كتاب لكشكولك</h2><p class="ks">هنا بتسجّل اسم الكتاب ومؤلفه بس. بعد كده تضيف اقتباساتك وأفكارك وأسئلتك تحته، مش بيجيب محتواه تلقائي.</p>
   <label class="fl" for="bti" style="margin-top:4px">اسم الكتاب</label>
   <input class="kin" id="bti" placeholder="مثلاً: العادات الذرية" maxlength="80" style="margin-top:6px">
   <label class="fl" for="bau">المؤلف</label>
@@ -647,8 +741,8 @@ body.reels{overflow:hidden}
   <div class="tabs" id="lts"></div>
   <input class="kin" id="lq" type="search" placeholder="بحث..." aria-label="بحث" style="margin-top:0">
   <div id="ltb"></div>
-  <div class="lsb"><button class="btn pri" id="kab" type="button">+ كتاب</button><button class="btn" id="kad" type="button">+ فايدة من كتاب</button></div>
-  <div class="lsb" style="margin-top:8px;grid-template-columns:1fr"><button class="btn" id="kcp" type="button">+ فكرة أو اقتباس أو سؤال</button></div>
+  <div class="lsb"><button class="btn pri" id="kab" type="button">+ كتاب</button><button class="btn" id="kad" type="button">+ أضف لحظة</button></div>
+  <button id="kcp" type="button" hidden>إضافة لحظة</button>
   <div class="exr"><select class="ksel" id="kxs" aria-label="نوع التصدير"><option value="books">تصدير الكتب</option><option value="all">تصدير كل المحتوى</option><option value="sessions">تصدير الجلسات</option></select><button class="btn" id="kex" type="button">تصدير CSV</button></div>
   <button class="btn dn" id="lcl" type="button">تم</button>
 </div>
@@ -666,9 +760,25 @@ body.reels{overflow:hidden}
   <div id="rfL"></div>
   <button class="btn dn" id="rfC" type="button">تم</button>
 </div>
+
+<div class="sheet" id="notebookSheet" role="dialog" aria-modal="true" aria-labelledby="bnTitle" hidden>
+  <div class="grip"></div><span class="v5-kicker">كشكول الكتاب</span><h2 id="bnTitle"></h2><p class="ks" id="bnAuthor"></p><div id="bnBody"></div>
+  <button class="btn dn" id="bookNotebookClose" type="button">رجوع للكتب</button>
+</div>
+<div class="sheet" id="answerSheet" role="dialog" aria-modal="true" aria-label="إجاباتي على السؤال" hidden>
+  <div class="grip"></div><h2>إجاباتي</h2><p class="rfq" id="qaQuestion"></p>
+  <textarea class="kt" id="qaText" placeholder="إنت شايف إيه دلوقتي؟ ممكن تضيف إجابة جديدة بعدين." rows="4"></textarea>
+  <button class="btn pri" id="qaSave" type="button" style="margin-top:10px">احفظ إجابتي</button>
+  <div id="qaList"></div><button class="btn dn" id="qaClose" type="button">تم</button>
+</div>
 <div id="athT" role="status" aria-live="polite"></div>
 <div class="sheet" id="setSheet" role="dialog" aria-modal="true" hidden>
   <div class="grip"></div><h2>الإعدادات</h2>
+  <h3>التطبيق على موبايلك</h3>
+  <button class="btn" id="v6Install" type="button">تثبيت المحور</button>
+  <p class="ks" id="v6InstallHelp">من رابط الموقع: افتح قائمة المتصفح واختر «إضافة إلى الشاشة الرئيسية». على iPhone استخدم قائمة المشاركة في Safari.</p>
+  <button class="btn" id="v6Update" type="button" hidden>تحديث التطبيق</button>
+  <p class="ks" id="v6OfflineStatus" role="status"></p>
   <h3>الأماكن</h3>
   <div id="pls"></div>
   <button class="btn pri" id="add" type="button">إضافة مكان</button>
@@ -741,12 +851,7 @@ function applyTheme(){
 }
 
 /* Render */
-function renderVerse(){
-  const t=today(),di=Math.floor(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())/864e5);
-  const v=VERSES[((di*2654435761)>>>0)%VERSES.length];
-  $("vt").textContent="﴿ "+v[0]+" ﴾";$("vr").textContent=v[1];
-  $("dl").textContent=fW.format(t)+" "+fD.format(t);
-}
+
 function renderNext(){
   const t=today();let best=null;
   state.places.forEach(p=>{const s=state.shifts[p.id]||{};for(const k in s){const d=parseKey(k);if(s[k]&&d>=t&&(!best||d<best.d))best={p,d,v:s[k]}}});
@@ -797,7 +902,7 @@ const renderAll=()=>{renderNext();renderTot();renderCal();renderLg()};
 
 /* Sheets */
 function show(id){$("scrim").hidden=false;$(id).hidden=false}
-function closeAll(){["scrim","daySheet","setSheet","bookSheet","newsSheet","noteSheet","libSheet","srcSheet","reflSheet"].forEach(i=>$(i).hidden=true);editKey=null;back=false}
+function closeAll(){["scrim","daySheet","setSheet","bookSheet","newsSheet","noteSheet","libSheet","srcSheet","reflSheet","notebookSheet","answerSheet"].forEach(i=>$(i).hidden=true);editKey=null;back=false}
 function renderDay(){
   $("db").innerHTML=state.places.map(p=>{
     const cur=(state.shifts[p.id]||{})[editKey]||"";
@@ -940,7 +1045,7 @@ $("todayBtn").addEventListener("click",()=>{const t=today();viewMonth=new Date(t
 const t0=today();viewMonth=new Date(t0.getFullYear(),t0.getMonth(),1);
 
 /* Knowledge library */
-const KT={idea:"فكرة",concept:"مفهوم",question:"سؤال"},LT={books:"الكتب",idea:"الأفكار",quote:"الاقتباسات",concept:"المفاهيم",app:"التطبيقات",question:"الأسئلة",sessions:"الجلسات"},RV=[1,7,30,90],RL=["بعد يوم: افتكرها من غير ما تبص","بعد أسبوع: اشرحها بأسلوبك","بعد شهر: اربطها بفكرة تانية","بعد ٣ شهور: لسه بتستفيد منها؟"];
+const KT={quote:"اقتباس",app:"فكرة أجربها",question:"سؤال لنفسي",idea:"فكرة",concept:"مفهوم"},LT={books:"الكتب",idea:"الأفكار",quote:"الاقتباسات",concept:"المفاهيم",app:"التطبيقات",question:"الأسئلة",sessions:"الجلسات"},RV=[1,7,30,90],RL=["بعد يوم: افتكرها من غير ما تبص","بعد أسبوع: اشرحها بأسلوبك","بعد شهر: اربطها بفكرة تانية","بعد ٣ شهور: لسه بتستفيد منها؟"];
 const kb=()=>{const k=state.kb||(state.kb={});k.books=k.books||[];k.items=k.items||[];k.sessions=k.sessions||[];k.books.forEach(b=>{if(!Array.isArray(b.notes))b.notes=[];if(!b.ts)b.ts=b.date&&/^\d{4}-\d\d-\d\d$/.test(b.date)?parseKey(b.date).getTime():Date.now()});return k};
 const STALE=7;
 const daysSince=ts=>Math.max(0,Math.floor((Date.now()-(ts||0))/864e5));
@@ -949,18 +1054,18 @@ const nWord=n=>n===0?"لسه مفيش فوايد":n===1?"فايدة واحدة":
 const touch=b=>{if(b)b.ts=Date.now()};
 const ICON_AUD='<svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>';
 const ICON_RD='<svg viewBox="0 0 24 24"><path d="M5 5h11a3 3 0 0 1 3 3v11H8a3 3 0 0 1-3-3z"/><path d="M9 9.5h6M9 13h4"/></svg>';
-let capType="idea",pendingBook=false;
+let capType="quote",pendingBook=false;
 const expanded=new Set();let noteBook="";
 const nid=()=>"k"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const bk=id=>kb().books.find(b=>b.id===id);
 const itTitle=i=>i.title||(i.text||"").split("\n")[0].slice(0,50);
-const VW={s:"vShifts",a:"vAdd",n:"vNews",r:"vReels"};
+const VW={s:"vShifts",a:"vAdd",n:"vNews",r:"vReels",f:"vFasel"};
 function setView(v){
   state.view=v;save();
   Object.keys(VW).forEach(x=>$(VW[x]).hidden=x!==v);
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("sel",b.dataset.v===v));
   document.body.classList.toggle("reels",v==="r");
-  if(v==="a")renderAdd();if(v==="r")renderAth();if(v==="n")renderNews();scrollTo(0,0);
+  if(v==="a")renderAdd();if(v==="r")renderAth();if(v==="n")renderNews();if(v==="f")renderQuiz();scrollTo(0,0);
 }
 function bookOpts(sel,first){
   const el=$(sel),cur=el.value;
@@ -968,10 +1073,15 @@ function bookOpts(sel,first){
   el.value=bk(cur)?cur:"";
 }
 function renderAdd(){
-  $("kch").innerHTML=Object.keys(KT).map(t=>'<button type="button" data-t="'+t+'" class="'+(t===capType?"sel":"")+'">'+KT[t]+"</button>").join("");
-  bookOpts("sbk","اختار الكتاب");bookOpts("kbs","من غير كتاب");
+  $("kch").innerHTML=["quote","app","question"].map(t=>'<button type="button" data-t="'+t+'" class="'+(t===capType?"sel":"")+'" aria-pressed="'+(t===capType)+'">'+KT[t]+"</button>").join("");
+  bookOpts("sbk","اختار الكتاب");bookOpts("kbs","ملاحظة شخصية، من غير كتاب");
   const c=capType==="concept";$("kfd").hidden=!c;$("kxm").hidden=!c;
-  $("kti").placeholder=c?"المصطلح (مثلاً: النوسيبو)":"العنوان";$("kt").placeholder=c?"التعريف العلمي":"التفاصيل";
+  $("captureOther").value=["idea","concept"].includes(capType)?capType:"";
+  $("kti").placeholder=c?"اسم المفهوم (اختياري)":"عنوان مختصر (اختياري)";
+  const labels={quote:["الاقتباس اللي عجبك","اكتب الجملة زي ما عجبتك...","جملة وقفتك وإنت بتسمع أو بتقرأ، احفظها ترجع لها."],app:["الفكرة اللي عايز تجربها","إيه الفكرة؟ وليه حابب تجربها؟","من السماع لخطوة في حياتك. احفظ الفكرة وحدد أول خطوة لو حابب."],question:["السؤال اللي بتسأله لنفسك","اكتب سؤالك هنا...","سؤال لسه بتفكر فيه، مش مطلوب تجاوبه دلوقتي. هتقدر تحفظ إجاباتك بعدين."],idea:["الفكرة","اكتب الفكرة بطريقتك...","فكرة عايز تحتفظ بيها وترجع تتأمل فيها."],concept:["شرح المفهوم","اشرحه لنفسك بطريقتك...","مصطلح عايز تفهمه، ومعاه مثال لو حابب."]};
+  const l=labels[capType];$("captureTextLabel").textContent=l[0];$("kt").placeholder=l[1];$("captureHint").textContent=l[2];
+  $("planWrap").hidden=capType!=="app";$("questionPrompts").hidden=capType!=="question";
+  $("captureMessage").textContent="";
 }
 function addItem(type,title,text,book,session){
   kb().items.push({id:nid(),type,title,text,book,session:session||"",date:keyOf(today()),ts:Date.now(),r:0});
@@ -1002,14 +1112,15 @@ function bookCard(b){
   const st='<span class="st'+(done?" ok":"")+'">'+(done?"خلّصته":"بتسمعه")+"</span>";
   const ns=b.notes.slice().reverse(),ex=expanded.has(b.id),list=ex?ns:ns.slice(0,1);
   const notes=ns.length?'<div class="bkn">'+list.map(x=>'<div class="nt"><p>'+esc(x.text)+"</p>"+(x.quote?'<p class="nq">«'+esc(x.quote)+"»</p>":"")+"<small>"+x.date+'</small><button type="button" data-a="ndel" data-id="'+b.id+'" data-n="'+x.id+'" aria-label="حذف الفايدة">×</button></div>').join("")+(ns.length>1?'<button type="button" class="nxl" data-a="ex" data-id="'+b.id+'">'+(ex?"إخفاء الفوايد":"عرض كل الفوايد ("+ns.length+")")+"</button>":"")+"</div>":"";
-  return '<article class="bk'+(done?" done":"")+'"><div class="bkh"><span class="bki '+(aud?"aud":"rd")+'">'+(aud?ICON_AUD:ICON_RD)+'</span><div class="bkt"><h4>'+esc(b.title)+"</h4><small>"+esc([b.author,aud?"كتاب صوتي":"كتاب مقروء"].filter(Boolean).join(" · "))+"</small></div>"+st+'</div><div class="bkm"><span class="pls" style="background:'+pc+'"></span><span>آخر نشاط '+agoTxt(b.ts)+"</span><span>·</span><span>"+nWord(ns.length)+"</span></div>"+notes+'<div class="bka"><button type="button" class="btn pri" data-a="note" data-id="'+b.id+'" style="flex:1">+ سجّل اللي اتعلمته</button><button type="button" class="btn" data-a="tg" data-id="'+b.id+'" style="flex:none;width:auto;padding:0 12px">'+(done?"رجّعها":"خلّصته ✓")+'</button><button type="button" class="btn del" data-a="del" data-t="b" data-id="'+b.id+'" aria-label="حذف الكتاب">×</button></div></article>';
+  return '<article class="bk'+(done?" done":"")+'"><div class="bkh"><span class="bki '+(aud?"aud":"rd")+'">'+(aud?ICON_AUD:ICON_RD)+'</span><div class="bkt"><h4>'+esc(b.title)+"</h4><small>"+esc([b.author,aud?"كتاب صوتي":"كتاب مقروء"].filter(Boolean).join(" · "))+"</small></div>"+st+'</div><div class="bkm"><span class="pls" style="background:'+pc+'"></span><span>آخر نشاط '+agoTxt(b.ts)+"</span><span>·</span><span>"+nAr(bookMoments(b).length)+" لحظة محفوظة"+"</span></div>"+'<button type="button" class="btn v5-opennotebook" data-a="notebook" data-id="'+b.id+'">افتح كشكول الكتاب</button>'+notes+'<div class="bka"><button type="button" class="btn pri" data-a="note" data-id="'+b.id+'" style="flex:1">+ أضف من الكتاب</button><button type="button" class="btn" data-a="tg" data-id="'+b.id+'" style="flex:none;width:auto;padding:0 12px">'+(done?"رجّعها":"خلّصته ✓")+'</button><button type="button" class="btn del" data-a="del" data-t="b" data-id="'+b.id+'" aria-label="حذف الكتاب">×</button></div></article>';
 }
 function capture(){
-  const t=$("kt").value.trim(),ti=$("kti").value.trim();if(!t&&!ti){$("kt").focus();return}
-  addItem(capType,ti||t.split("\n")[0].slice(0,50),t||ti,$("kbs").value);
+  const t=$("kt").value.trim(),ti=$("kti").value.trim();if(!t){$("captureMessage").textContent="اكتب حاجة الأول عشان تتحفظ في أثر.";$("kt").focus();return}
+  const plan=capType==="app"?$("kplan").value.trim():"",text=t+(plan?"\n\nخطوة أجربها: "+plan:"");
+  addItem(capType,ti||t.split("\n")[0].slice(0,50),text,$("kbs").value);
   touch(bk($("kbs").value));
   if(capType==="concept"){const it=kb().items[kb().items.length-1];it.field=$("kfd").value.trim();it.example=$("kxm").value.trim()}
-  save();["kt","kti","kfd","kxm"].forEach(i=>$(i).value="");const nu=kb().items[kb().items.length-1];const a=ath();a.k="all";a.s="all";save();setView("r");renderAth({rebuild:1,keep:nu.id});
+  save();["kt","kti","kfd","kxm","kplan"].forEach(i=>$(i).value="");const nu=kb().items[kb().items.length-1];const a=ath();a.k="all";a.s="all";save();setView("r");renderAth({rebuild:1,keep:nu.id});
 }
 document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.v)));
 $("kch").addEventListener("click",e=>{const b=e.target.closest("button[data-t]");if(b){capType=b.dataset.t;renderAdd()}});
@@ -1113,7 +1224,7 @@ function renderAth(opts){
   clearTimeout(seenT);
   if(!c){
     const none=!all;
-    el.innerHTML='<div class="ath-sl empty"><span class="gl">✦</span><h3>'+(none?"ابدأ بأول أثر":"مفيش حاجة هنا")+"</h3><p>"+(none?"سجّل كتابًا وأول فايدة منه، أو التقط فكرة أو اقتباسًا، وبعدها هتظهر هنا كقصص تراجعها كل يوم.":"الفلتر ده فاضي دلوقتي. جرّب فلتر تاني.")+'</p><div class="ath-ec">'+(none?'<button type="button" class="ath-cta" data-z="book">إضافة كتاب</button><button type="button" class="ath-cta g" data-z="cap">التقاط فكرة</button>':'<button type="button" class="ath-cta" data-z="reset">عرض الكل</button>')+"</div></div>";
+    el.innerHTML='<div class="ath-sl empty"><span class="gl">✦</span><h3>'+(none?"ابدأ بأول أثر":"مفيش حاجة هنا")+"</h3><p>"+(none?"احفظ اقتباس عجبك، أو فكرة تجربها، أو سؤال لنفسك. اختار الكتاب لو حابب، وهتلاقيهم هنا كاستوريهاتك.":"الفلتر ده فاضي دلوقتي. جرّب فلتر تاني.")+'</p><div class="ath-ec">'+(none?'<button type="button" class="ath-cta" data-z="book">إضافة كتاب</button><button type="button" class="ath-cta g" data-z="cap">أضف أول لحظة</button>':'<button type="button" class="ath-cta" data-z="reset">عرض الكل</button>')+"</div></div>";
     return;
   }
   const m=peek(c.id),K=KIND[c.kind],nud=c.kind==="nudge";
@@ -1125,10 +1236,10 @@ function renderAth(opts){
    :'<div class="ath-act">'+[["like","heart","أعجبتني",m.like],["fav","mark","حفظ",m.fav],["refl","pen","تأمل"+(refl?" "+nAr(refl):""),refl>0],["src","src","المصدر",false],["share","share","مشاركة",false],["rc","eye","تذكّر",rc===1]].map(x=>'<button type="button" class="ath-b'+(x[3]?" on":"")+'" data-z="'+x[0]+'" aria-label="'+x[2]+'"'+(x[0]==="like"||x[0]==="fav"||x[0]==="rc"?' aria-pressed="'+!!x[3]+'"':"")+">"+ICO[x[1]]+"<span>"+x[2]+"</span></button>").join("")+"</div>";
   const hid=rc===1;
   el.innerHTML='<div class="ath-sl '+(dir>0?"inu":dir<0?"ind":"")+(hid?" hide":"")+(c.kind==="quote"?" qt":"")+' '+szCls(c)+'" style="--a:'+pal[0]+";--b:"+pal[1]+";--ang:"+ang+'deg">'
-   +'<div class="ath-bg" aria-hidden="true"><i class="o1"></i><i class="o2"></i><span class="gl">'+K[1]+"</span></div>"+progHTML()
+   +'<div class="ath-bg" aria-hidden="true"><i class="o1"></i><i class="o2"></i>'+(c.kind==="idea"?bulbMarkup():'<span class="gl">'+K[1]+"</span>")+"</div>"+progHTML()
    +'<div class="ath-top"><span class="ath-kind">'+K[0]+"</span>"+(!nud&&isNew(c)?'<span class="ath-new">لم تُراجَع</span>':"")+'<span class="ath-cnt">'+nAr(qi+1)+" / "+nAr(Q.length)+"</span></div>"
    +'<div class="ath-body"><div class="ath-main'+(hid?" blur":"")+'"'+(hid?' aria-hidden="true"':"")+">"+main+"</div>"+(hid?'<div class="ath-cover"><p>حاول تفتكرها قبل ما تكشفها</p><button type="button" class="ath-cta" data-z="reveal">اكشف الإجابة</button></div>':"")+(rc===2?'<div class="ath-rate"><span>كنت فاكرها؟</span><button type="button" data-z="ok">آه ✓</button><button type="button" data-z="no">لسه</button></div>':"")+"</div>"
-   +'<div class="ath-src"><div>'+bookLine+"</div></div>"+acts+"</div>";
+   +'<div class="ath-src"><div>'+bookLine+"</div>"+(c.kind==="app"?'<button class="v5-follow" type="button" data-follow="tried" aria-pressed="'+!!m.triedAt+'">'+(m.triedAt?"جرّبتها ✓":"جرّبتها")+'</button>':c.kind==="question"?'<button class="v5-follow" type="button" data-follow="answer">اكتب إجابتي'+(m.answers?.length?' ('+nAr(m.answers.length)+')':'')+'</button>':"")+"</div>"+acts+"</div>";
   dir=0;
   if(!nud)seenT=setTimeout(()=>{const x=meta(c.id);x.seen=Date.now();x.n=(x.n||0)+1;save();},1800);
 }
@@ -1158,7 +1269,7 @@ async function cardPNG(c){
   rg(W*.85,H*.12,720,.18);rg(W*.1,H*.92,820,.12);
   x.direction="rtl";x.textAlign="center";x.textBaseline="alphabetic";
   const SANS='"IBM Plex Sans Arabic","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif',SERIF='"Amiri","Noto Naskh Arabic","Traditional Arabic",serif';
-  x.globalAlpha=.06;x.fillStyle="#fff";x.font="700 900px "+SERIF;x.fillText(KIND[c.kind][1],W/2,H*.62);x.globalAlpha=1;
+  if(c.kind==="idea")drawBulb(x,W,H);else{x.globalAlpha=.06;x.fillStyle="#fff";x.font="700 900px "+SERIF;x.fillText(KIND[c.kind][1],W/2,H*.62);x.globalAlpha=1;}
   x.fillStyle="rgba(255,255,255,.18)";const kt=KIND[c.kind][0];x.font="600 40px "+SANS;const kw=x.measureText(kt).width+70;
   x.beginPath();x.roundRect?x.roundRect(W/2-kw/2,150,kw,76,38):x.rect(W/2-kw/2,150,kw,76);x.fill();
   x.fillStyle="#fff";x.fillText(kt,W/2,203);
@@ -1262,14 +1373,15 @@ function openBookSheet(fromLib,pb){
 }
 function subClose(){const b=back;closeAll();if(b){renderLibSheet();show("libSheet")}else renderAth()}
 function openLib(focusId){
+  if(focusId){openNotebook(focusId);return}
   if(focusId){expanded.add(focusId);lt="books";$("lq").value=""}
   renderLibSheet();show("libSheet");
   if(focusId){const e=document.querySelector('#ltb [data-bk="'+focusId+'"]');if(e)e.scrollIntoView({block:"start"})}
 }
 function renderLibSheet(){
   const k=kb(),lis=k.books.filter(b=>b.status!=="completed"),doneB=k.books.filter(b=>b.status==="completed");
-  const nNotes=k.books.reduce((a,b)=>a+b.notes.length,0);
-  $("kst").innerHTML='<div><b>'+nAr(lis.length)+'</b><span>بتسمعها دلوقتي</span></div><div><b>'+nAr(doneB.length)+'</b><span>خلّصتها</span></div><div><b>'+nAr(nNotes)+'</b><span>فايدة متسجلة</span></div>';
+  const nNotes=k.books.reduce((a,b)=>a+bookMoments(b).length,0);
+  $("kst").innerHTML='<div><b>'+nAr(lis.length)+'</b><span>بتسمعها دلوقتي</span></div><div><b>'+nAr(doneB.length)+'</b><span>خلّصتها</span></div><div><b>'+nAr(nNotes)+'</b><span>لحظة محفوظة</span></div>';
   $("lts").innerHTML=[["books","الكتب "+nAr(k.books.length)],["items","المحتوى "+nAr(k.items.length)]].map(x=>'<button type="button" data-lt="'+x[0]+'" class="'+(lt===x[0]?"sel":"")+'">'+x[1]+"</button>").join("");
   const q=$("lq").value.trim().toLowerCase();
   if(lt==="books"){
@@ -1290,8 +1402,8 @@ function openNote(id,kb2){
   $("ntx").value="";$("nqt").value="";show("noteSheet");$("ntx").focus();
 }
 $("kab").addEventListener("click",()=>openBookSheet(true));
-$("kad").addEventListener("click",()=>openNote(""));
-$("kcp").addEventListener("click",()=>{closeAll();setView("a")});
+$("kad").addEventListener("click",()=>openCapture());
+$("kcp").addEventListener("click",()=>openCapture());
 $("athLib").addEventListener("click",()=>openLib());
 $("lq").addEventListener("input",renderLibSheet);
 $("lts").addEventListener("click",e=>{const b=e.target.closest("button[data-lt]");if(b){lt=b.dataset.lt;renderLibSheet()}});
@@ -1318,7 +1430,8 @@ $("nok").addEventListener("click",()=>{
 $("libSheet").addEventListener("click",e=>{
   const b=e.target.closest("button[data-a]");if(!b)return;
   const k=kb(),a=b.dataset.a,id=b.dataset.id;
-  if(a==="note"){openNote(id);return}
+  if(a==="notebook"){openNotebook(id);return}
+  if(a==="note"){openCapture(id);return}
   if(a==="ex"){if(expanded.has(id))expanded.delete(id);else expanded.add(id);renderLibSheet();return}
   if(a==="ndel"){const o=bk(id);if(o&&confirm("حذف الفايدة دي؟")){o.notes=o.notes.filter(x=>x.id!==b.dataset.n);save();renderLibSheet();renderAth()}return}
   if(a==="tg"){const o=bk(id);if(o){o.status=o.status==="completed"?"reading":"completed";touch(o)}}
@@ -1427,7 +1540,239 @@ $("rst").addEventListener("change",async e=>{
     state=c;save();location.reload();
   }catch(_){say("الملف ده مش نسخة احتياطية صالحة.")}
 });
-applyTheme();renderVerse();renderAll();setView(["a","n","r"].includes(state.view)?state.view:"s");
+/* v5: a book is a notebook of quotes, things to try and questions. */
+function openCapture(bookId,type){
+  closeAll();capType=type||'quote';setView('a');
+  if(bookId&&bk(bookId))$('kbs').value=bookId;
+  $('kt').focus();
+}
+function captureLabel(type){return {quote:'اقتباس',app:'فكرة أجربها',idea:'فكرة',question:'سؤال لنفسي',concept:'مفهوم',benefit:'فايدة'}[type]||'فكرة'}
+function bookMoments(b){
+  const rows=kb().items.filter(i=>i.book===b.id).map(i=>({id:i.id,type:i.type,title:i.title||'',text:i.text||'',date:i.date||'',ts:i.ts||0}));
+  b.notes.forEach(n=>{
+    if(n.text)rows.push({id:b.id+'.'+n.id,type:'benefit',title:'',text:n.text,date:n.date||'',ts:n.ts||0});
+    if(n.quote)rows.push({id:b.id+'.'+n.id+'.q',type:'quote',title:'',text:n.quote,date:n.date||'',ts:n.ts||0});
+  });
+  return rows.sort((a,b)=>b.ts-a.ts);
+}
+let notebookId='';
+function openNotebook(id){
+  const b=bk(id);if(!b)return;
+  notebookId=id;closeAll();
+  $('bnTitle').textContent=b.title;
+  $('bnAuthor').textContent=[b.author,b.src==='book'?'كتاب مقروء':'كتاب صوتي'].filter(Boolean).join(' · ');
+  const rows=bookMoments(b);
+  const groups=[['quote','اقتباسات عجبتني'],['app','أفكار أجربها'],['question','أسئلة لنفسي']];
+  $('bnBody').innerHTML=groups.map(([type,label])=>{
+    const list=rows.filter(i=>type==='app'?!['quote','question'].includes(i.type):i.type===type);
+    return '<section class="v5-group"><div class="v5-grouphead"><h3>'+label+' <small>'+nAr(list.length)+'</small></h3><button type="button" class="v5-link" data-capture="'+type+'">+ إضافة</button></div>'+(list.length?list.map(i=>{
+      const m=peek(i.id),body=i.text||i.title;
+      return '<article class="v5-note">'+(i.title&&i.title!==body&&!body.startsWith(i.title)?'<b>'+esc(i.title)+'</b>':'')+'<p>'+esc(body)+'</p><small>'+esc(i.date)+'</small>'+(i.type==='question'?'<button type="button" class="v5-link" data-answer="'+i.id+'">إجاباتي'+(m.answers?.length?' ('+nAr(m.answers.length)+')':'')+'</button>':i.type==='app'?'<span class="v5-small">'+(m.triedAt?'جرّبتها ✓':'لسه ما اتجرّبتش')+'</span>':'')+'</article>';
+    }).join(''):'<p class="ks">'+({quote:'احفظ جملة وقفت معاك من الكتاب.',app:'فكرة نفسك تحولها لخطوة في حياتك.',question:'إيه اللي مقتنع بيه؟ وإيه اللي محتاج تفكر فيه أكتر؟'}[type])+'</p>')+'</section>';
+  }).join('');
+  show('notebookSheet');$('notebookSheet').scrollTop=0;
+}
+$('captureBookNew').addEventListener('click',()=>openBookSheet(false,'kbs'));
+$('captureOther').addEventListener('change',e=>{if(e.target.value){capType=e.target.value;renderAdd()}});
+$('bookNotebookClose').addEventListener('click',()=>{closeAll();openLib()});
+$('bnBody').addEventListener('click',e=>{
+  const add=e.target.closest('[data-capture]');if(add)return openCapture(notebookId,add.dataset.capture);
+  const answer=e.target.closest('[data-answer]');if(answer){const c=cards().find(c=>c.id===answer.dataset.answer);if(c)openAnswer(c,true)}
+});
+let answerId='',answerFromBook=false;
+function renderAnswers(){
+  const list=peek(answerId).answers||[];
+  $('qaList').innerHTML=list.length?list.slice().reverse().map(a=>'<article class="v5-note"><p>'+esc(a.t)+'</p><small>'+new Intl.DateTimeFormat('ar-EG',{dateStyle:'medium',timeStyle:'short'}).format(new Date(a.ts))+'</small></article>').join(''):'<p class="ks">لسه مفيش إجابة. ممكن ترجع تضيف إجابة جديدة لما رأيك يتغير.</p>';
+}
+function openAnswer(c,fromBook=false){
+  answerId=c.id;answerFromBook=fromBook;closeAll();$('qaQuestion').textContent=c.body||c.title;
+  $('qaText').value='';renderAnswers();show('answerSheet');$('qaText').focus();
+}
+$('qaSave').addEventListener('click',()=>{
+  const text=$('qaText').value.trim();if(!text){$('qaText').focus();return}
+  const m=meta(answerId);(m.answers||(m.answers=[])).push({id:nid(),t:text,ts:Date.now()});save();$('qaText').value='';renderAnswers();renderAth();
+});
+$('qaClose').addEventListener('click',()=>{const backToBook=answerFromBook;closeAll();if(backToBook)openNotebook(notebookId)});
+$('athC').addEventListener('click',e=>{
+  const action=e.target.closest('[data-follow]');if(!action)return;
+  const c=curCard();if(!c)return;
+  if(action.dataset.follow==='answer')openAnswer(c);
+  else if(action.dataset.follow==='tried'){
+    const m=meta(c.id);if(m.triedAt){if(!confirm('تشيل علامة «جرّبتها»؟'))return;delete m.triedAt}else m.triedAt=Date.now();
+    save();renderAth();
+  }
+});
+const BULB_PATH='M9 18h6M9.5 21h5M8.5 15.5C8.5 13 5 12 5 8a7 7 0 0 1 14 0c0 4-3.5 5-3.5 7.5V18h-7zM12 1v1';
+function bulbMarkup(){return '<svg class="gl v5-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="'+BULB_PATH+'"/></svg>'}
+function drawBulb(ctx,W,H){
+  ctx.save();ctx.globalAlpha=.08;ctx.strokeStyle='#fff';ctx.lineWidth=1.1;ctx.lineCap='round';ctx.lineJoin='round';
+  const size=W*.84;ctx.translate((W-size)/2,H*.52-size/2);ctx.scale(size/24,size/24);ctx.stroke(new Path2D(BULB_PATH));ctx.restore();
+}
+
+/* FASEL: original reviewed fallback bank, retained unchanged. */
+const QUESTION_BANK=[{"id":"l01","kind":"logic","q":"خمسة أصحاب، كل واحد سلّم على كل الباقيين مرة واحدة. حصلت كام مصافحة؟","o":["٥","١٠","١٥","٢٠"],"a":1,"why":"كل واحد بيقابل ٤، لكن كده كل مصافحة اتحسبت مرتين: ٥ × ٤ ÷ ٢ = ١٠."},{"id":"l02","kind":"logic","q":"لو عديت المتسابق اللي في المركز التاني، وباقي المراكز ما اتغيرتش، بقيت في المركز الكام؟","o":["الأول","التاني","التالت","الأخير"],"a":1,"why":"إنت أخدت مكان صاحب المركز التاني، مش مكان الأول."},{"id":"l03","kind":"logic","q":"في درج شرابات سودة وبيضا بس. من غير ما تبص، تسحب كام شراب عشان تضمن اتنين من نفس اللون؟","o":["٢","٣","٤","٥"],"a":1,"why":"أول اتنين ممكن يبقوا مختلفين. التالت لازم يطابق واحد منهم، لأن فيه لونين بس."},{"id":"l04","kind":"logic","q":"أب عنده ٤٠ سنة وابنه عنده ١٠. بعد كام سنة عمر الأب يبقى ضعف عمر الابن؟","o":["١٠","١٥","٢٠","٣٠"],"a":2,"why":"بعد ٢٠ سنة الأب يبقى ٦٠ والابن ٣٠. فرق العمر بيفضل ٣٠ سنة."},{"id":"l05","kind":"logic","q":"العدد بيتضاعف كل خطوة: ٢، ٤، ٨، ١٦. إيه اللي بعده؟","o":["٢٤","٢٨","٣٠","٣٢"],"a":3,"why":"القاعدة هنا محددة: بنضرب في ٢ كل مرة. ١٦ × ٢ = ٣٢."},{"id":"l06","kind":"logic","q":"إيه الزاوية الأصغر بين عقربي ساعة بعقارب الساعة ٢:٣٠ بالظبط؟","o":["٧٥ درجة","٩٠ درجة","١٠٥ درجات","١٢٠ درجة"],"a":2,"why":"عقرب الدقايق عند ١٨٠ درجة، والساعات اتحرك لنص المسافة بين ٢ و٣، يعني ٧٥ درجة. الفرق ١٠٥ درجات."},{"id":"l07","kind":"logic","q":"عندك ٩ كرات متطابقة في الشكل، واحدة بس أتقل. بميزان كفتين، أقل عدد وزنات يضمن تعرفها؟","o":["وزنة","وزنتين","٣ وزنات","٤ وزنات"],"a":1,"why":"اقسمهم ٣ مجموعات، كل مجموعة ٣. وزّن مجموعتين لتحدد المجموعة الأتقل، وبعدين وزّن كرتين منها. لو اتساووا فالتالتة هي الأتقل."},{"id":"l08","kind":"logic","q":"عددان مجموعهما ١٠، والفرق بين الأكبر والأصغر ٤. إيه العدد الأكبر؟","o":["٥","٦","٧","٨"],"a":2,"why":"العددان ٧ و٣: مجموعهما ١٠ والفرق بينهما ٤."},{"id":"l09","kind":"logic","q":"٣ أشخاص لازم يعدّوا النهر بقارب يسع شخصين. كلهم بيعرفوا يجدّفوا، والقارب لازم يرجع بحد. أقل كام عبور؟","o":["٢","٣","٤","٥"],"a":1,"why":"اتنين يعبروا، واحد يرجع بالقارب، ثم يعبر مع التالت. كده ٣ عبورات."},{"id":"l10","kind":"logic","q":"كيس فيه ٣ كرات بيضا و٤ سودة. تسحب كام كرة من غير إرجاع عشان تضمن كرة بيضا؟","o":["٣","٤","٥","٧"],"a":2,"why":"أسوأ حالة تسحب الأربع السودة الأول. الكرة الخامسة لازم تكون بيضا."},{"id":"l11","kind":"logic","q":"عندك ٣ قمصان مختلفة وبنطلونين مختلفين. كام طقم مختلف تقدر تكوّن بقميص وبنطلون؟","o":["٥","٦","٨","٩"],"a":1,"why":"كل واحد من الـ٣ قمصان ينفع مع أي واحد من البنطلونين: ٣ × ٢ = ٦."},{"id":"l12","kind":"logic","q":"جد وأب وابن اتقاسموا ٣ تفاحات، كل واحد خد واحدة. كام شخص كان موجود؟","o":["٢","٣","٤","٥"],"a":1,"why":"٣ أشخاص: الجد أب للأب، والأب ابن للجد وأب للولد. وصف «أب» و«ابن» ممكن ينطبق على نفس الشخص."},{"id":"l13","kind":"logic","q":"٣ ماكينات متطابقة بتنتج ٣ قطع في ٣ دقايق. لو بتشتغل بنفس المعدل ومستقلة، ٩ ماكينات تنتج ٩ قطع في قد إيه؟","o":["دقيقة","٣ دقايق","٦ دقايق","٩ دقايق"],"a":1,"why":"كل ماكينة بتنتج قطعة في ٣ دقايق. تسع ماكينات تشتغل مع بعض فتنتج ٩ قطع في نفس الـ٣ دقايق."},{"id":"l14","kind":"logic","q":"لو أول إمبارح كان التلات، النهارده يبقى إيه؟","o":["الأربع","الخميس","الجمعة","السبت"],"a":1,"why":"أول إمبارح التلات، إمبارح الأربع، والنهارده الخميس."},{"id":"l15","kind":"logic","q":"إيه الأكبر في الكتلة: كيلو حديد ولا كيلو قطن؟","o":["الحديد","القطن","نفس الكتلة","حسب شكلهم"],"a":2,"why":"الاتنين كتلتهم كيلو واحد. اللي بيختلف هو الحجم، مش الكتلة."},{"id":"g01","kind":"knowledge","q":"إيه أكبر كوكب في المجموعة الشمسية؟","o":["الأرض","المريخ","المشتري","زحل"],"a":2,"why":"المشتري هو أكبر كواكب المجموعة الشمسية، وقطره عند خط الاستواء حوالي ١١ مرة قطر الأرض.","source":"https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/","credit":"NASA"},{"id":"g02","kind":"knowledge","q":"إيه أقرب كوكب للشمس؟","o":["عطارد","الزهرة","الأرض","المريخ"],"a":0,"why":"عطارد هو أول كوكب من ناحية الشمس، وهو كمان أصغر كواكب المجموعة الشمسية.","source":"https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/","credit":"NASA"},{"id":"g03","kind":"knowledge","q":"أنهي كوكب معروف باسم الكوكب الأحمر؟","o":["نبتون","المريخ","الزهرة","زحل"],"a":1,"why":"المريخ معروف باسم الكوكب الأحمر. وهو رابع كوكب من الشمس.","source":"https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/","credit":"NASA"},{"id":"g04","kind":"knowledge","q":"الأرض ترتيبها الكام من الشمس؟","o":["الأول","التاني","التالت","الرابع"],"a":2,"why":"الترتيب من الشمس بيبدأ بعطارد، ثم الزهرة، ثم الأرض.","source":"https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/","credit":"NASA"},{"id":"g05","kind":"knowledge","q":"كام كوكب في المجموعة الشمسية وفق التصنيف الحالي؟","o":["٧","٨","٩","١٠"],"a":1,"why":"المجموعة الشمسية فيها ٨ كواكب. بلوتو مصنّف كوكب قزم، مش واحدًا من الثمانية.","source":"https://science.nasa.gov/solar-system/planets/planet-sizes-and-locations-in-our-solar-system/","credit":"NASA"},{"id":"g06","kind":"knowledge","q":"إيه الرمز الكيميائي للذهب؟","o":["Ag","Fe","Au","Cu"],"a":2,"why":"رمز الذهب Au. الرموز التانية هنا لعناصر مختلفة، مش اختصارات تانية للذهب.","source":"https://periodic-table.rsc.org/element/79/gold","credit":"Royal Society of Chemistry"},{"id":"g07","kind":"knowledge","q":"إيه العدد الذري للأكسجين؟","o":["٦","٨","١٠","١٦"],"a":1,"why":"العدد الذري للأكسجين ٨، يعني نواة ذرة الأكسجين فيها ٨ بروتونات.","source":"https://periodic-table.rsc.org/element/8/oxygen","credit":"Royal Society of Chemistry"},{"id":"g08","kind":"knowledge","q":"صيغة الميه H₂O معناها إيه لكل جزيء؟","o":["ذرتين هيدروجين وذرة أكسجين","ذرة هيدروجين وذرتين أكسجين","ذرتين أكسجين بس","ذرة هيدروجين بس"],"a":0,"why":"الرقم ٢ بعد H بيخص الهيدروجين. مفيش رقم بعد O، فمعناه ذرة أكسجين واحدة.","source":"https://periodic-table.rsc.org/element/8/oxygen","credit":"Royal Society of Chemistry"},{"id":"g09","kind":"knowledge","q":"رقعة الشطرنج العادية فيها كام مربع صغير؟","o":["٣٢","٤٨","٦٤","٨١"],"a":2,"why":"الرقعة ٨ صفوف × ٨ أعمدة، يعني ٦٤ مربعًا.","source":"https://handbook.fide.com/chapter/E012023","credit":"FIDE"},{"id":"g10","kind":"knowledge","q":"في بداية مباراة شطرنج عادية، كل لاعب بيبدأ بكام قطعة بما فيها البيادق؟","o":["٨","١٢","١٦","٣٢"],"a":2,"why":"كل لاعب بيبدأ بـ١٦ قطعة: ملك ووزير وقلعتين وفيلين وحصانين و٨ بيادق.","source":"https://handbook.fide.com/chapter/E012023","credit":"FIDE"},{"id":"g11","kind":"knowledge","q":"في كرة القدم المعتادة، أقصى عدد للاعبي الفريق داخل الملعب، بالحارس، كام؟","o":["٩","١٠","١١","١٢"],"a":2,"why":"قانون اللعبة بيحدد أقصى عدد بـ١١ لاعبًا لكل فريق، وواحد منهم لازم يكون حارس المرمى.","source":"https://www.theifab.com/laws/latest/the-players/","credit":"IFAB"},{"id":"g12","kind":"knowledge","q":"وفق قانون كرة القدم، المباراة ما ينفعش تبدأ أو تستمر لو فريق قل عن كام لاعب؟","o":["٥","٦","٧","٨"],"a":2,"why":"الحد الأدنى ٧ لاعبين. لو فريق قل عن كده، المباراة لا تبدأ أو لا تستمر وفق القانون.","source":"https://www.theifab.com/laws/latest/the-players/","credit":"IFAB"},{"id":"g13","kind":"knowledge","q":"إيه أكبر حيوان موجود على الأرض؟","o":["الفيل الإفريقي","الزرافة","الحوت الأزرق","القرش الأبيض"],"a":2,"why":"الحوت الأزرق هو أكبر حيوان على الأرض.","source":"https://kids.britannica.com/kids/article/blue-whale/599002","credit":"Britannica"},{"id":"g14","kind":"knowledge","q":"الحوت الأزرق بيتصنّف ضمن إيه؟","o":["الأسماك","الثدييات","الزواحف","البرمائيات"],"a":1,"why":"الحوت الأزرق من الثدييات. بيطلع لسطح الميه عشان يتنفس الهواء، رغم إنه بيعيش في البحر.","source":"https://kids.britannica.com/kids/article/blue-whale/599002","credit":"Britannica"},{"id":"g15","kind":"knowledge","q":"الأخطبوط عنده كام قلب؟","o":["قلب واحد","قلبين","٣ قلوب","٤ قلوب"],"a":2,"why":"عنده ٣ قلوب: اتنين بيضخوا الدم للخياشيم، والتالت بيوزّع الدم المؤكسج على باقي الجسم.","source":"https://www.noaa.gov/stories/love-is-in-air-and-sea-5-facts-about-affections-of-marine-creatures","credit":"NOAA"}];
+const qById=new Map(QUESTION_BANK.map(q=>[q.id,q]));
+const fsState=()=>{
+  const f=state.fasel||(state.fasel={});f.seen=f.seen||{logic:[],knowledge:[]};f.rounds=f.rounds||0;return f;
+};
+function shuffled(values){const a=values.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startLocalQuiz(){
+  const f=fsState(),many=f.rounds%2===0?'logic':'knowledge',chosen=[];
+  for(const kind of ['logic','knowledge']){
+    const count=kind===many?3:2;
+    let seen=f.seen[kind]||[];
+    const all=QUESTION_BANK.filter(q=>q.kind===kind);
+    let available=shuffled(all.filter(q=>!seen.includes(q.id)));
+    if(available.length<count){
+      const rest=shuffled(all.filter(q=>!available.some(a=>a.id===q.id)));
+      const taken=available.length;available=available.concat(rest);seen=[];
+      f.seen[kind]=available.slice(taken,count).map(q=>q.id);
+    }else f.seen[kind]=seen.concat(available.slice(0,count).map(q=>q.id));
+    chosen.push(...available.slice(0,count));
+  }
+  f.round={source:'local',questions:shuffled(chosen).map(q=>({id:q.id,order:shuffled([0,1,2,3]),pick:null})),index:0,finished:false};
+  f.rounds++;save();renderQuiz();
+}
+function quizSource(q){if(q.online)return '<p class="ks">أسئلة: <a class="v5-link" href="https://opentdb.com/" target="_blank" rel="noopener noreferrer">Open Trivia DB</a> · <a class="v5-link" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a><br>ترجمة آلية: MyMemory، النص مترجم وقد يخطئ.</p><details class="v5-review"><summary>النص الأصلي بالإنجليزي</summary><div dir="ltr" lang="en"><p>'+esc(q.original?.[0]||'')+'</p><ol>'+((q.original||[]).slice(1).map(t=>'<li>'+esc(t)+'</li>').join(''))+'</ol></div></details>';return q.source?'<a class="v5-link" href="'+esc(q.source)+'" target="_blank" rel="noopener noreferrer">مصدر المعلومة: '+esc(q.credit)+'</a>':''}
+function renderQuiz(){
+  const f=fsState(),r=f.round,el=$('quizBody');
+  if(v6QuizBusy){el.innerHTML='<div class="v5-quizintro"><div class="v5-quizmark" aria-hidden="true">؟</div><h2>بنجهّز أسئلة جديدة</h2><p role="status">بنجيب ٥ أسئلة ونترجمها للعربي. ممكن تاخد شوية وقت.</p><button class="btn" data-quiz="local" type="button">ابدأ فورًا بالأسئلة المحفوظة</button><small>لو الاتصال أو الترجمة ما كملوش، هنرجع للأسئلة المحفوظة تلقائيًا.</small></div>';return}
+  if(r?.questions)r.questions.forEach(e=>{if(e.snapshot&&v6ValidQuestion(e.snapshot))qById.set(e.id,e.snapshot)});
+  if(!r||!Array.isArray(r.questions)||r.questions.length!==5||r.questions.some(e=>!qById.has(e.id))){
+    el.innerHTML='<div class="v5-quizintro"><div class="v5-quizmark" aria-hidden="true">؟</div><h2>فاصل يفكّ دماغك</h2><p>٥ أسئلة منوعة من الإنترنت بترجمة آلية للعربي.<br>ومن غير نت، أسئلة المنطق والمعلومات المحفوظة. من غير مؤقت.</p><button type="button" class="btn pri" data-quiz="start">ابدأ جولة</button><small>الترجمة الآلية ممكن تغلط. عند التعذر بنستخدم '+nAr(QUESTION_BANK.length)+' سؤال محفوظ بشرح.</small></div>';return;
+  }
+  const score=r.questions.filter(e=>e.pick===qById.get(e.id).a).length;
+  if(r.finished){
+    el.innerHTML='<div class="v5-result"><span class="v5-kicker">خلصت الجولة</span><h2>'+nAr(score)+' <small>من ٥</small></h2><p>'+(score===5?'خمسة من خمسة! دماغك حاضرة.':score>=3?'جولة حلوة. وكسبت كام معلومة.':'فاصل وخدته، وكام معلومة جديدة كسبتهم.')+'</p><button type="button" class="btn pri" data-quiz="start">جولة جديدة</button></div><details class="v5-review"><summary>راجع الإجابات الخمسة</summary>'+r.questions.map((e,i)=>{const q=qById.get(e.id);return '<article class="v5-note"><small>السؤال '+nAr(i+1)+' · '+(e.pick===q.a?'صح ✓':'إجابة مختلفة')+'</small><h3>'+esc(q.q)+'</h3><p>إجابتك: '+esc(q.o[e.pick]||'من غير إجابة')+'<br>الصح: '+esc(q.o[q.a])+'</p><p class="ks">'+esc(q.why)+'</p>'+quizSource(q)+'</article>'}).join('')+'</details>';return;
+  }
+  const entry=r.questions[r.index],q=qById.get(entry.id),answered=entry.pick!==null;
+  el.innerHTML='<div class="v5-quiztop"><span>السؤال '+nAr(r.index+1)+' من ٥</span><span>'+ (q.online?'إنترنت · ترجمة آلية':q.kind==='logic'?'ذكاء ومنطق · محفوظ':'معلومات عامة · محفوظ')+'</span></div><div class="v5-progress" aria-label="تقدم الجولة"><i style="width:'+((r.index+(answered?1:0))/5*100)+'%"></i></div><h2 class="v5-question">'+esc(q.q)+'</h2><div class="v5-options">'+entry.order.map((choice,i)=>'<button type="button" class="v5-option'+(answered?(choice===q.a?' correct':choice===entry.pick?' wrong':''):'')+'" data-choice="'+choice+'"'+(answered?' disabled':'')+'><span>'+['أ','ب','ج','د'][i]+'</span><b>'+esc(q.o[choice])+'</b>'+(answered&&choice===q.a?'<em>✓</em>':answered&&choice===entry.pick?'<em>×</em>':'')+'</button>').join('')+'</div>'+(answered?'<div class="v5-feedback" role="status" tabindex="-1"><b>'+ (entry.pick===q.a?'صح ✓':'الصح: '+esc(q.o[q.a]))+'</b><p>'+esc(q.why)+'</p>'+quizSource(q)+'</div><button type="button" class="btn pri" data-quiz="next">'+(r.index===4?'شوف النتيجة':'السؤال اللي بعده')+'</button>':'<p class="ks v5-quizhint">اختار إجابة واحدة. مفيش مؤقت، خد راحتك.</p>');
+}
+$('quizBody').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.quiz==='local'){v6QuizRun++;v6QuizController?.abort();v6QuizBusy=false;startLocalQuiz();return}
+  if(b.dataset.quiz==='start'){startQuiz();$('quizBody').scrollIntoView({block:'start',behavior:'smooth'});return}
+  const r=fsState().round;if(!r||r.finished)return;
+  const entry=r.questions[r.index];
+  if(b.dataset.choice!==undefined&&entry.pick===null){
+    const choice=Number(b.dataset.choice);if(!entry.order.includes(choice))return;entry.pick=choice;save();renderQuiz();document.querySelector('.v5-feedback')?.focus({preventScroll:true});
+  }else if(b.dataset.quiz==='next'&&entry.pick!==null){
+    if(r.index<4)r.index++;else r.finished=true;save();renderQuiz();$('quizBody').scrollIntoView({block:'start',behavior:'smooth'});
+  }
+});
+
+$('questionPrompts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if($('kt').value.trim()&&!confirm('تستبدل السؤال المكتوب بالمثال ده؟'))return;$('kt').value=b.textContent;$('kt').focus()});
+
+/* v6: remote content is optional. Original data and storage key remain intact. */
+const V6_PREFIX='almihwar-v6-';
+const v6Read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(V6_PREFIX+key))??fallback}catch(_){return fallback}};
+const v6Write=(key,value)=>{try{localStorage.setItem(V6_PREFIX+key,JSON.stringify(value))}catch(_){}};
+let v6VersePending='',v6QuizBusy=false,v6QuizRun=0,v6QuizController=null,v6InstallPrompt=null,v6SW=null;
+const v6Translations=v6Read('translations',{});
+function v6Date(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+async function v6JSON(url,signal){const r=await fetch(url,{credentials:'omit',signal});if(!r.ok)throw Error('HTTP '+r.status);return r.json()}
+function renderVerse(){
+  const t=today(),day=v6Date(),parts=day.split('-').map(Number),di=Math.floor(Date.UTC(parts[0],parts[1]-1,parts[2])/864e5),ix=((di*2654435761)>>>0)%VERSES.length;
+  const fallback=VERSES[ix],cached=v6Read('daily-ayah',null);
+  const paint=(text,ref)=>{$('vt').textContent='﴿ '+text+' ﴾';$('vr').textContent=ref};
+  paint(fallback[0],fallback[1]);$('vr').title='آية محفوظة للعمل بدون إنترنت';
+  $('dl').textContent=fW.format(t)+' '+fD.format(t);
+  if(cached?.day===day&&cached.text&&cached.ref){paint(cached.text,cached.ref);$('vr').title='AlQuran Cloud · محفوظة لهذا اليوم';return}
+  if(v6VersePending===day||!navigator.onLine)return;
+  v6VersePending=day;
+  // Preserve the original daily thematic selection, but request the full verse text.
+  const refs=['94:5','65:3','13:28','20:114','2:286','2:152','93:5','2:153','65:2','2:201','16:127','11:88','40:60','65:7','2:216','3:139','5:32','26:80','2:212','70:5','7:156','57:4','7:56','12:21'];
+  v6JSON('https://api.alquran.cloud/v1/ayah/'+refs[ix]+'/quran-uthmani',AbortSignal.timeout(8000)).then(j=>{
+    const a=j.data;if(j.code!==200||!a?.text||!a?.surah?.name||!Number.isInteger(a.numberInSurah))throw Error('Invalid ayah');
+    if(v6Date()!==day)return;
+    const value={day,text:a.text,ref:a.surah.name+' · '+nAr(a.numberInSurah)};v6Write('daily-ayah',value);paint(value.text,value.ref);$('vr').title='المصدر: AlQuran Cloud';
+  }).catch(()=>{});
+}
+function v6ValidQuestion(q){return !!q&&typeof q.id==='string'&&typeof q.q==='string'&&q.q.length>3&&Array.isArray(q.o)&&q.o.length===4&&q.o.every(a=>typeof a==='string'&&a.length>0)&&Number.isInteger(q.a)&&q.a>=0&&q.a<4}
+function v6Normalize(t){return t.normalize('NFKC').replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/\s+/g,' ').trim().toLocaleLowerCase()}
+async function v6Translate(text,signal){
+  const key='mt-v2:en|ar:'+text;
+  if(/^[\d\s.,%+−–-]+$/.test(text))return text;
+  if(typeof v6Translations[key]==='string')return v6Translations[key];
+  if(new TextEncoder().encode(text).length>500)throw Error('Translation too long');
+  const u=new URL('https://api.mymemory.translated.net/get');u.search=new URLSearchParams({q:text,langpair:'en|ar'});
+  const j=await v6JSON(u.href,signal);
+  // Fuzzy translation-memory matches can add biographies or change proper names.
+  const machine=(j.matches||[]).find(m=>m.reference==='Machine Translation.'||m['created-by']==='MT!');
+  const value=machine?.translation||j.responseData?.translatedText;
+  if(Number(j.responseStatus)!==200||j.quotaFinished||typeof value!=='string'||!value.trim()||/MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID LANGUAGE/i.test(value))throw Error('Translation unavailable');
+  const decoder=document.createElement('textarea');decoder.innerHTML=value;const translated=decoder.value.trim();
+  if(translated.length>Math.max(100,text.length*4))throw Error('Expanded translation');
+  v6Translations[key]=translated;
+  const keys=Object.keys(v6Translations);for(const old of keys.slice(0,Math.max(0,keys.length-300)))delete v6Translations[old];
+  v6Write('translations',v6Translations);return translated;
+}
+async function v6TriviaCall(path,signal){
+  const last=v6Read('trivia-last',0),delay=Math.max(0,5200-(Date.now()-last));
+  if(delay)await new Promise((resolve,reject)=>{const timer=setTimeout(resolve,delay);signal.addEventListener('abort',()=>{clearTimeout(timer);reject(Error('Cancelled'))},{once:true})});
+  if(signal.aborted)throw Error('Cancelled');v6Write('trivia-last',Date.now());
+  return v6JSON('https://opentdb.com/'+path,signal);
+}
+async function v6OnlineQuestions(signal){
+  let token=v6Read('trivia-token',null);
+  if(!token||Date.now()-token.ts>5.5*3600000){const j=await v6TriviaCall('api_token.php?command=request',signal);if(j.response_code!==0||!j.token)throw Error('Token');token={value:j.token,ts:Date.now()};v6Write('trivia-token',token)}
+  const j=await v6TriviaCall('api.php?amount=5&type=multiple&encode=url3986&token='+encodeURIComponent(token.value),signal);
+  if(j.response_code===3||j.response_code===4)v6Write('trivia-token',null);
+  if(j.response_code!==0||!Array.isArray(j.results)||j.results.length!==5)throw Error('Questions unavailable');
+  token.ts=Date.now();v6Write('trivia-token',token);
+  const questions=await Promise.all(j.results.map(async item=>{
+    const original=[item.question,item.correct_answer,...(item.incorrect_answers||[])].map(x=>decodeURIComponent(x));
+    if(original.length!==5||original.some(x=>!x))throw Error('Invalid choices');
+    const translated=[];for(const text of original)translated.push(await v6Translate(text,signal));
+    const [q,...o]=translated;
+    if(!/[\u0600-\u06ff]/.test(q)||new Set(o.map(v6Normalize)).size!==4)throw Error('Unusable translation');
+    let hash=2166136261;for(const c of original.join('|'))hash=Math.imul(hash^c.charCodeAt(0),16777619)>>>0;
+    return {id:'api-'+hash.toString(16),kind:'knowledge',online:true,q,o,a:0,why:'المصدر بيحدد الإجابة الصحيحة، لكنه مش بيوفر شرح للسؤال ده. الترجمة آلية وقد تخطئ.',original};
+  }));
+  if(new Set(questions.map(q=>q.id)).size!==5)throw Error('Repeated questions');
+  return questions;
+}
+async function startQuiz(){
+  if(v6QuizBusy)return;
+  if(!navigator.onLine){startLocalQuiz();athToast('من غير إنترنت: بدأنا بالأسئلة المحفوظة.');return}
+  const run=++v6QuizRun;v6QuizBusy=true;renderQuiz();
+  const controller=new AbortController();v6QuizController=controller;const timeout=setTimeout(()=>controller.abort(),45000);
+  try{
+    const questions=await v6OnlineQuestions(controller.signal);
+    if(run!==v6QuizRun)return;
+    questions.forEach(q=>qById.set(q.id,q));const f=fsState();
+    f.round={source:'online',questions:questions.map(q=>({id:q.id,snapshot:q,order:shuffled([0,1,2,3]),pick:null})),index:0,finished:false};
+    f.rounds++;save();
+  }catch(_){
+    if(run!==v6QuizRun)return;
+    controller.abort();v6QuizBusy=false;startLocalQuiz();athToast('الاتصال أو الترجمة ما كملوش. بدأنا بالأسئلة المحفوظة.');
+  }finally{clearTimeout(timeout);if(run===v6QuizRun){v6QuizBusy=false;v6QuizController=null;renderQuiz()}}
+}
+function v6Init(){
+  const install=$('v6Install'),help=$('v6InstallHelp'),status=$('v6OfflineStatus'),update=$('v6Update');
+  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  install.hidden=standalone;
+  if(standalone)help.textContent='المحور متثبت على جهازك. بياناتك محفوظة في المتصفح على الجهاز ده.';
+  if(location.protocol==='file:'){help.textContent='التثبيت محتاج رابط الموقع. الملف ده يشتغل مباشرة، لكن تثبيته والعمل بدون إنترنت كتطبيق محتاجين نسخة GitHub Pages.';status.textContent='نسخة ملف محلي، التثبيت غير متاح هنا.'}
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();v6InstallPrompt=e;install.hidden=false;help.textContent='تقدر تثبّت المحور كتطبيق من الزر ده. بياناتك بتفضل على جهازك.'});
+  install.addEventListener('click',async()=>{if(v6InstallPrompt){await v6InstallPrompt.prompt();const result=await v6InstallPrompt.userChoice;if(result.outcome==='accepted')install.hidden=true;v6InstallPrompt=null}else help.textContent=location.protocol==='file:'?'افتح رابط GitHub Pages الأول. من الملف المحلي مش هتقدر تثبّت التطبيق.':'Android: قائمة Chrome ← إضافة إلى الشاشة الرئيسية أو تثبيت التطبيق. iPhone: Safari ← مشاركة ← إضافة إلى الشاشة الرئيسية ← إضافة.'});
+  window.addEventListener('appinstalled',()=>{install.hidden=true;help.textContent='اتثبت. افتحه من أيقونة المحور على الشاشة الرئيسية.'});
+  let refreshing=false;navigator.serviceWorker?.addEventListener('controllerchange',()=>{if(refreshing)return;refreshing=true;location.reload()});
+  update.addEventListener('click',()=>{if(!v6SW?.waiting)return;if(confirm('نحدّث التطبيق؟ استنى لو عندك كلام لسه ما حفظتوش.')){save();v6SW.waiting.postMessage({type:'SKIP_WAITING'})}});
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+    navigator.serviceWorker.register('./sw.js').then(reg=>{v6SW=reg;
+      status.textContent='جاري تجهيز فتح التطبيق بدون إنترنت…';
+      navigator.serviceWorker.ready.then(()=>{status.textContent='واجهة التطبيق جاهزة بدون إنترنت. الآية والأسئلة الجديدة والأخبار محتاجين اتصال.'});
+      const notice=()=>{if(reg.waiting&&navigator.serviceWorker.controller){update.hidden=false;status.textContent='في إصدار جديد جاهز. احفظ اللي بتكتبه وبعدها اضغط تحديث التطبيق.'}else update.hidden=true};
+      notice();reg.addEventListener('updatefound',()=>{reg.installing?.addEventListener('statechange',notice)});
+    }).catch(()=>{status.textContent='التثبيت بدون إنترنت مش جاهز. اتأكد إن sw.js وباقي ملفات التطبيق جنب index.html على الموقع.'});
+  }
+  window.addEventListener('online',()=>{v6VersePending='';renderVerse()});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderVerse()});
+  setInterval(renderVerse,60000);
+}
+
+v6Init();applyTheme();renderVerse();renderAll();setView(["a","n","r","f"].includes(state.view)?state.view:"s");
 })();
 </script>
 </body>
