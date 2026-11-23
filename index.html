@@ -505,6 +505,20 @@ button.nw:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 #newsSheet #nsS:disabled{background:var(--sf);color:var(--mu);border-color:color-mix(in srgb,var(--ink) 25%,transparent)}
 #newsSheet .btn.dn{background:none;color:var(--ink);border:1px solid color-mix(in srgb,var(--ink) 25%,transparent)}
 #newsSheet a.btn{color:var(--ink)}
+/* ===== v7: الأخبار كاستوري + المحفوظات + تعديل المصادر ===== */
+button.nw.st{flex-direction:column;align-items:stretch;gap:0;padding:0;overflow:hidden;border-radius:18px}
+button.nw.st .nwi{position:relative;width:100%;height:auto;aspect-ratio:4/5;border-radius:0;border:0}
+button.nw.st .nwi::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,0) 45%,rgba(0,0,0,.78));pointer-events:none}
+button.nw.st .nwb{position:absolute;inset-inline:0;bottom:0;padding:14px}
+button.nw.st .nwb b{color:#fff;-webkit-line-clamp:3;font-size:15.5px;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+button.nw.st .nwb small{color:rgba(255,255,255,.88);margin-top:8px}
+button.nw.st .nsrc{background:rgba(255,255,255,.94);color:#111;border:0}
+button.nw.st.noimg{padding:18px 16px;min-height:120px;justify-content:center}
+button.nw.st.noimg .nwb{position:static;padding:0}
+button.nw.st.noimg .nwb b{color:var(--ink);text-shadow:none;font-size:17px;-webkit-line-clamp:4}
+button.nw.st.noimg .nwb small{color:var(--mu)}
+button.nw.st.noimg .nsrc{background:var(--pri);color:var(--pon)}
+.rm.fed{font-size:15px}
 /* ===== v4: ATHAR Moments as a full-screen reels page ===== */
 body.reels{overflow:hidden}
 #vReels{position:fixed;inset:0;z-index:8;background:#07090F;display:flex;align-items:center;justify-content:center}
@@ -708,7 +722,7 @@ body.reels{overflow:hidden}
   <div class="grip"></div><h2 id="nsT"></h2><small class="ks" id="nsM" style="display:block"></small>
   <img id="nsI" alt="" hidden referrerpolicy="no-referrer">
   <div class="nsb" id="nsB"></div>
-  <div class="r2"><a class="btn" id="nsL" target="_blank" rel="noopener noreferrer">فتح المصدر</a><button class="btn" id="nsS" type="button">حفظ كفكرة</button></div>
+  <div class="r2"><a class="btn" id="nsL" target="_blank" rel="noopener noreferrer">فتح المصدر</a><button class="btn" id="nsS" type="button">حفظ الخبر</button></div>
   <button class="btn dn" id="nsC" type="button">إغلاق</button>
 </div>
 <div class="sheet" id="bookSheet" role="dialog" aria-modal="true" hidden>
@@ -1451,21 +1465,26 @@ $("kex").addEventListener("click",()=>{
 const FEEDS0=[{id:"f1",name:"BBC عربي",url:"https://feeds.bbci.co.uk/arabic/rss.xml"}];
 const feeds=()=>{if(!Array.isArray(state.feeds))state.feeds=FEEDS0.slice();return state.feeds};
 let nTok=0,nst=t=>{$("nst").textContent=t},fsay=t=>{$("nms").textContent=t};
+const SAVED_MS=7*864e5;
+const savedNews=()=>{if(!Array.isArray(state.savedNews))state.savedNews=[];return state.savedNews};
+function purgeSaved(){const cut=Date.now()-SAVED_MS,s=savedNews(),n=s.filter(x=>x&&(x.at||0)>cut);if(n.length!==s.length){state.savedNews=n;save()}}
+const isSaved=i=>savedNews().some(x=>(x.l||x.t)===(i.l||i.t));
 const nf=()=>state.nf||"all";
 const rich=h=>{const d=new DOMParser().parseFromString(h||"","text/html");d.querySelectorAll("br").forEach(b=>b.replaceWith("\n"));d.querySelectorAll("p,div,li,h1,h2,h3,h4").forEach(p=>p.append("\n"));return d.body.textContent.replace(/[ \t\u00a0]+/g," ").replace(/ ?\n ?/g,"\n").replace(/\n{3,}/g,"\n\n").trim()};
 const pd=v=>{if(!v)return null;const t=/^\d{4}-\d\d-\d\d \d/.test(v)?v.replace(" ","T")+"Z":v,d=new Date(t);return isNaN(d)?null:d};
 const fmtD=v=>{const d=pd(v);return d?fD.format(d)+" · "+d.toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"}):(v||"")};
 const longer=(a,b)=>b.length>a.length?b:a;
 const plain=h=>new DOMParser().parseFromString(h||"","text/html").body.textContent.replace(/\s+/g," ").trim();
-const okUrl=u=>/^https?:\/\//i.test(u);
+const okUrl=u=>{try{return ["http:","https:"].includes(new URL(u).protocol)}catch(_){return false}};
 window.nwErr=el=>{const b=el.closest(".nw");if(b){b.classList.add("noimg");b.classList.remove("hero")}};
 function renderNews(){
-  const f=feeds();if(nf()!=="all"&&!f.some(x=>x.id===nf()))state.nf="all";
-  $("nch").innerHTML=f.length>1?['<button type="button" data-f="all" class="'+(nf()==="all"?"sel":"")+'">الكل</button>'].concat(f.map(x=>'<button type="button" data-f="'+x.id+'" class="'+(x.id===nf()?"sel":"")+'">'+esc(x.name)+"</button>")).join(""):"";
+  purgeSaved();
+  const f=feeds();if(nf()!=="all"&&nf()!=="saved"&&!f.some(x=>x.id===nf()))state.nf="all";
+  $("nch").innerHTML=['<button type="button" data-f="all" class="'+(nf()==="all"?"sel":"")+'">الكل</button>','<button type="button" data-f="saved" class="'+(nf()==="saved"?"sel":"")+'">المحفوظة</button>'].concat(f.map(x=>'<button type="button" data-f="'+x.id+'" class="'+(x.id===nf()?"sel":"")+'">'+esc(x.name)+"</button>")).join("");
   loadNews();
 }
 function renderFeedSet(){
-  $("fls").innerHTML=feeds().map(x=>'<div class="fe"><div><b>'+esc(x.name)+'</b><small dir="ltr">'+esc(x.url)+'</small></div><button class="rm" type="button" data-fd="'+x.id+'" aria-label="حذف المصدر">×</button></div>').join("")||'<p class="ks">مفيش مصادر لسه.</p>';
+  $("fls").innerHTML=feeds().map(x=>'<div class="fe"><div><b>'+esc(x.name)+'</b><small dir="ltr">'+esc(x.url)+'</small></div><button class="rm fed" type="button" data-fe="'+x.id+'" aria-label="تعديل المصدر" title="تعديل الاسم أو الرابط">✎</button><button class="rm" type="button" data-fd="'+x.id+'" aria-label="حذف المصدر">×</button></div>').join("")||'<p class="ks">مفيش مصادر لسه.</p>';
 }
 async function fetchFeed(url){
   try{
@@ -1476,8 +1495,24 @@ async function fetchFeed(url){
   const it=[...x.querySelectorAll("item,entry")].map(n=>{const g=t=>{const e=n.querySelector(t);return e?e.textContent:""},l=n.querySelector("link");return{t:g("title"),l:g("link")||(l&&l.getAttribute("href"))||"",d:g("pubDate")||g("updated"),s:plain(g("description")||g("summary")),c:longer(rich(g("description")||g("summary")),rich((n.getElementsByTagName("content:encoded")[0]||{}).textContent||g("content"))),img:(n.querySelector("enclosure[url],thumbnail")||{getAttribute:()=>""}).getAttribute("url")||""}});
   if(!it.length)throw new Error("empty");return it;
 }
+function renderNewsList(items){
+  $("nls").innerHTML=items.map((i,n)=>{
+    const has=okUrl(i.img);
+    const img=has?'<span class="nwi"><img src="'+esc(i.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="nwErr(this)"></span>':"";
+    const left=i.at?Math.max(1,Math.ceil((i.at+SAVED_MS-Date.now())/864e5)):0;
+    const meta='<span class="nsrc">'+esc(i.src)+"</span>"+(i.d?"<span>"+esc(fmtD(i.d))+"</span>":"")+(left?"<span>متبقي "+left+(left===1?" يوم":left===2?" يومين":left<=10?" أيام":" يوم")+"</span>":"");
+    return '<button type="button" class="nw st'+(has?"":" noimg")+'" data-n="'+n+'">'+img+'<span class="nwb"><b>'+esc(i.t)+'</b><small>'+meta+"</small></span></button>";
+  }).join("");
+}
 async function loadNews(clear){
   const f=feeds(),sel=nf(),list=sel==="all"?f:f.filter(x=>x.id===sel),tk=++nTok;
+  if(sel==="saved"){
+    purgeSaved();
+    const items=savedNews().slice().sort((a,b)=>(b.at||0)-(a.at||0));
+    if(!items.length){$("nls").innerHTML="";return nst("مفيش أخبار محفوظة لسه. افتح أي خبر واضغط «حفظ الخبر» وهيفضل هنا ٧ أيام.")}
+    window._news=items;renderNewsList(items);
+    return nst(items.length+" خبر محفوظ · بيتمسحوا تلقائي بعد ٧ أيام من الحفظ");
+  }
   if(!list.length){$("nls").innerHTML="";return nst("مفيش مصادر. ضيف مصدر RSS من الإعدادات.")}
   if(clear)$("nls").innerHTML="";
   nst("جاري التحديث...");
@@ -1486,20 +1521,28 @@ async function loadNews(clear){
   const items=res.flatMap(r=>r.status==="fulfilled"?r.value:[]).sort((a,b)=>(pd(b.d)||0)-(pd(a.d)||0)).slice(0,60),bad=res.filter(r=>r.status==="rejected").length;
   if(!items.length){$("nls").innerHTML="";return nst("ما قدرتش أحمّل المصادر. اتأكد من الرابط والنت.")}
   window._news=items;
-  $("nls").innerHTML=items.map((i,n)=>{
-    const has=okUrl(i.img);
-    const img=has?'<span class="nwi"><img src="'+esc(i.img)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="nwErr(this)"></span>':"";
-    const meta='<span class="nsrc">'+esc(i.src)+"</span>"+(i.d?"<span>"+esc(fmtD(i.d))+"</span>":"");
-    return '<button type="button" class="nw'+(has?" th":"")+(n===0&&has?" hero":"")+'" data-n="'+n+'">'+img+'<span class="nwb"><b>'+esc(i.t)+'</b><small>'+meta+"</small></span></button>";
-  }).join("");
+  renderNewsList(items);
   nst(items.length+" خبر"+(bad?" · "+bad+" مصدر ما اشتغلش":"")+" · اتحدّث "+new Date().toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"}));
 }
 $("nch").addEventListener("click",e=>{const b=e.target.closest("button[data-f]");if(b){state.nf=b.dataset.f;save();$("nls").innerHTML="";renderNews()}});
-$("fls").addEventListener("click",e=>{const b=e.target.closest("button[data-fd]");if(!b)return;const f=feeds().find(x=>x.id===b.dataset.fd);if(f&&confirm("حذف «"+f.name+"»؟")){state.feeds=feeds().filter(x=>x!==f);save();renderFeedSet();fsay("");if(state.view==="n")renderNews()}});
+let editingFeed=null;
+function resetFeedForm(){editingFeed=null;$("nur").value="";$("nnm").value="";$("nad").textContent="إضافة مصدر"}
+$("fls").addEventListener("click",e=>{
+  const ed=e.target.closest("button[data-fe]");
+  if(ed){const f=feeds().find(x=>x.id===ed.dataset.fe);if(f){editingFeed=f.id;$("nnm").value=f.name;$("nur").value=f.url;$("nad").textContent="حفظ التعديل";fsay("عدّل الاسم أو الرابط واضغط «حفظ التعديل».");$("nnm").focus()}return}
+  const b=e.target.closest("button[data-fd]");if(!b)return;const f=feeds().find(x=>x.id===b.dataset.fd);
+  if(f&&confirm("حذف «"+f.name+"»؟")){if(editingFeed===f.id)resetFeedForm();state.feeds=feeds().filter(x=>x!==f);save();renderFeedSet();fsay("");if(state.view==="n")renderNews()}
+});
 $("nad").addEventListener("click",()=>{
   const u=$("nur").value.trim(),n=$("nnm").value.trim();
   if(!okUrl(u))return fsay("اكتب رابط RSS صحيح يبدأ بـ https://");
-  const x={id:nid(),name:n||new URL(u).hostname,url:u};feeds().push(x);save();$("nur").value="";$("nnm").value="";renderFeedSet();fsay("اتضاف ✓");if(state.view==="n")renderNews();
+  if(editingFeed){
+    const f=feeds().find(x=>x.id===editingFeed);
+    if(f){f.name=n||new URL(u).hostname;f.url=u;save();renderFeedSet();resetFeedForm();fsay("اتعدّل ✓");if(state.view==="n")renderNews()}
+    else resetFeedForm();
+    return;
+  }
+  const x={id:nid(),name:n||new URL(u).hostname,url:u};feeds().push(x);save();resetFeedForm();renderFeedSet();fsay("اتضاف ✓");if(state.view==="n")renderNews();
 });
 let curN=null;
 $("nls").addEventListener("click",e=>{
@@ -1508,9 +1551,21 @@ $("nls").addEventListener("click",e=>{
   const im=$("nsI");if(okUrl(i.img)){im.src=i.img;im.hidden=false}else{im.hidden=true;im.removeAttribute("src")}
   $("nsB").textContent=i.c||i.s||"مفيش تفاصيل في الخبر ده، افتح المصدر.";
   const a=$("nsL");if(okUrl(i.l)){a.href=i.l;a.hidden=false}else a.hidden=true;
-  const sv=$("nsS");sv.textContent="حفظ كفكرة";sv.disabled=false;show("newsSheet");$("newsSheet").scrollTop=0;
+  const sv=$("nsS");sv.disabled=false;sv.textContent=isSaved(i)?"إزالة من المحفوظات":"حفظ الخبر";show("newsSheet");$("newsSheet").scrollTop=0;
 });
-$("nsS").addEventListener("click",()=>{if(!curN)return;addItem("idea",curN.t.slice(0,80),((curN.c||curN.s||"").slice(0,300)+"\n"+(okUrl(curN.l)?curN.l:"")).trim(),"");save();$("nsS").textContent="اتحفظت ✓";$("nsS").disabled=true});
+$("nsS").addEventListener("click",()=>{
+  if(!curN)return;
+  purgeSaved();
+  const s=savedNews(),k=curN.l||curN.t,ix=s.findIndex(x=>(x.l||x.t)===k);
+  if(ix>-1){
+    s.splice(ix,1);save();
+    $("nsS").textContent="حفظ الخبر";
+    if(state.view==="n"&&nf()==="saved")loadNews();
+    return;
+  }
+  s.unshift({id:nid(),t:String(curN.t||"").slice(0,200),l:okUrl(curN.l)?curN.l:"",d:curN.d||"",s:String(curN.s||"").slice(0,600),c:String(curN.c||curN.s||"").slice(0,6000),img:okUrl(curN.img)?curN.img:"",src:curN.src||"",at:Date.now()});
+  save();$("nsS").textContent="اتحفظ ✓ (اضغط للإزالة)";
+});
 
 /* Backup / restore */
 $("bkp").addEventListener("click",()=>{
@@ -1776,4 +1831,4 @@ v6Init();applyTheme();renderVerse();renderAll();setView(["a","n","r","f"].includ
 })();
 </script>
 </body>
-</html>
+  </html>
