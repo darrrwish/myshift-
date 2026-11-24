@@ -185,6 +185,18 @@ section{margin-top:8px}
 .ks{font-size:12px;margin-bottom:8px}
 .kin,.ksel{min-height:42px;margin-top:6px;border:0;border-radius:10px;background:var(--bg);padding:0 12px}
 .kt{border:0;border-radius:10px;background:var(--bg);min-height:64px}
+.rtb{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+.rtb button{min-height:28px;padding:0 10px;border-radius:8px;border:1px solid var(--ln);background:var(--bg);color:var(--mu);font-size:12px;font-weight:600;cursor:pointer}
+.rtb button:active{background:var(--sf);color:var(--ink)}
+.rte{outline:none;cursor:text}
+.rte[data-placeholder]:empty::before{content:attr(data-placeholder);color:var(--mu);pointer-events:none}
+.rtxt h4{margin:8px 0 4px;font-size:15px}
+.rtxt hr{border:0;border-top:1px solid var(--ln);margin:8px 0}
+.rtxt ul,.rtxt ol{margin:4px 0;padding-inline-start:20px}
+.rtxt p{margin:0 0 6px}
+.thin{font-weight:300}
+details.v5-note summary{cursor:pointer;font-weight:600}
+details.v5-note .rtxt{margin-top:6px}
 .chips{gap:6px;margin:6px 0}
 .chips button{min-height:32px;padding:0 12px;border:0;background:var(--bg);font-size:12.5px;font-weight:500}
 .chips button.sel{background:var(--pri);color:var(--pon)}
@@ -651,7 +663,7 @@ body.reels{overflow:hidden}
       <p class="ks" id="captureHint"></p>
       <div class="chips v5-types" id="kch" role="group" aria-label="نوع اللي هتحفظه"></div>
       <label class="fl" for="kt" id="captureTextLabel">الاقتباس اللي عجبك</label>
-      <textarea class="kt" id="kt" rows="5" style="min-height:132px;margin-top:6px"></textarea>
+      <div data-rtb="kt"></div><div class="kt rte" id="kt" contenteditable="true" style="min-height:132px;margin-top:6px"></div>
       <div id="questionPrompts" hidden><p class="ks">ممكن تبدأ بسؤال زي:</p><div class="v5-prompts"><button type="button">أنا مقتنع بالفكرة دي ليه؟</button><button type="button">إمتى الفكرة دي ما تنفعش؟</button></div></div>
       <div id="planWrap" hidden><label class="fl" for="kplan">أول خطوة هتجربها (اختياري)</label><textarea class="kt" id="kplan" placeholder="خطوة صغيرة وواضحة تعملها إزاي؟" rows="2" style="min-height:70px;margin-top:6px"></textarea></div>
       <label class="fl" for="kbs">الكتاب المصدر <small>اختياري</small></label>
@@ -793,7 +805,7 @@ body.reels{overflow:hidden}
 </div>
 <div class="sheet" id="answerSheet" role="dialog" aria-modal="true" aria-label="إجاباتي على السؤال" hidden>
   <div class="grip"></div><h2>إجاباتي</h2><p class="rfq" id="qaQuestion"></p>
-  <textarea class="kt" id="qaText" placeholder="إنت شايف إيه دلوقتي؟ ممكن تضيف إجابة جديدة بعدين." rows="4"></textarea>
+  <div data-rtb="qaText"></div><div class="kt rte" id="qaText" contenteditable="true" data-placeholder="إنت شايف إيه دلوقتي؟ ممكن تضيف إجابة جديدة بعدين."></div>
   <button class="btn pri" id="qaSave" type="button" style="margin-top:10px">احفظ إجابتي</button>
   <div id="qaList"></div><button class="btn dn" id="qaClose" type="button">تم</button>
 </div>
@@ -1157,7 +1169,7 @@ const t0=today();viewMonth=new Date(t0.getFullYear(),t0.getMonth(),1);
 
 /* Knowledge library */
 const KT={quote:"اقتباس",app:"فكرة أجربها",question:"سؤال لنفسي",idea:"فكرة",concept:"مفهوم"},LT={books:"الكتب",idea:"الأفكار",quote:"الاقتباسات",concept:"المفاهيم",app:"التطبيقات",question:"الأسئلة",sessions:"الجلسات"},RV=[1,7,30,90],RL=["بعد يوم: افتكرها من غير ما تبص","بعد أسبوع: اشرحها بأسلوبك","بعد شهر: اربطها بفكرة تانية","بعد ٣ شهور: لسه بتستفيد منها؟"];
-const kb=()=>{const k=state.kb||(state.kb={});k.books=k.books||[];k.items=k.items||[];k.sessions=k.sessions||[];k.books.forEach(b=>{if(!Array.isArray(b.notes))b.notes=[];if(!b.ts)b.ts=b.date&&/^\d{4}-\d\d-\d\d$/.test(b.date)?parseKey(b.date).getTime():Date.now()});return k};
+const kb=()=>{const k=state.kb||(state.kb={});k.books=k.books||[];k.items=k.items||[];k.sessions=k.sessions||[];k.books.forEach(b=>{if(!Array.isArray(b.notes))b.notes=[];if(!Array.isArray(b.takeaways))b.takeaways=[];if(!b.ts)b.ts=b.date&&/^\d{4}-\d\d-\d\d$/.test(b.date)?parseKey(b.date).getTime():Date.now()});return k};
 const STALE=7;
 const daysSince=ts=>Math.max(0,Math.floor((Date.now()-(ts||0))/864e5));
 const agoTxt=ts=>{const d=daysSince(ts);return d<=0?"النهارده":d===1?"إمبارح":d===2?"من يومين":d<=10?"من "+d+" أيام":"من "+d+" يوم"};
@@ -1169,6 +1181,26 @@ let capType="quote",pendingBook=false;
 const expanded=new Set();let noteBook="";
 const nid=()=>"k"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const bk=id=>kb().books.find(b=>b.id===id);
+/* Rich text: small toolbar (bold, thin, underline, strike, lists, heading, divider, clear). Saved HTML is whitelisted. */
+const RTAGS={B:1,STRONG:1,I:1,EM:1,U:1,S:1,STRIKE:1,BR:1,UL:1,OL:1,LI:1,H4:1,HR:1,P:1,DIV:1,SPAN:1};
+function cleanHtml(src){const d=document.createElement("div");d.innerHTML=src||"";
+  (function walk(n){Array.from(n.children).forEach(c=>{
+    if(!RTAGS[c.tagName]){const f=document.createDocumentFragment();while(c.firstChild)f.appendChild(c.firstChild);n.replaceChild(f,c);walk(n);return}
+    Array.from(c.attributes).forEach(a=>{if(!(c.tagName==="SPAN"&&a.name==="class"&&a.value==="thin"))c.removeAttribute(a.name)});
+    walk(c)})})(d);
+  return d.innerHTML}
+function htmlToText(h){if(!h)return"";const d=document.createElement("div");d.innerHTML=String(h).replace(/<br\s*\/?>/gi,"\n").replace(/<hr\s*\/?>/gi,"\n———\n").replace(/<\/(p|div|li|h4|ul|ol)>/gi,"\n");return d.textContent.replace(/\n{3,}/g,"\n\n").trim()}
+const RTB_CMDS=[["bold","عريض"],["thin","رفيع"],["underline","تسطير"],["strikeThrough","شطب"],["insertUnorderedList","نقطية"],["insertOrderedList","مرقمة"],["h4","عنوان"],["hr","فاصل"],["clear","مسح"]];
+function rtbHtml(id){return '<div class="rtb" role="toolbar" aria-label="تنسيق النص" data-rte="'+id+'">'+RTB_CMDS.map(t=>'<button type="button" data-cmd="'+t[0]+'">'+t[1]+"</button>").join("")+"</div>"}
+function rtbExec(cmd,ed){ed.focus();
+  if(cmd==="clear"){document.execCommand("removeFormat");return}
+  if(cmd==="hr"){document.execCommand("insertHorizontalRule");return}
+  if(cmd==="h4"){document.execCommand("formatBlock",false,"h4");return}
+  if(cmd==="thin"){const s=getSelection();if(!s.rangeCount||s.getRangeAt(0).collapsed)return;const r=s.getRangeAt(0),sp=document.createElement("span");sp.className="thin";try{r.surroundContents(sp)}catch(e){sp.appendChild(r.extractContents());r.insertNode(sp)}return}
+  document.execCommand(cmd,false,null)}
+document.addEventListener("mousedown",e=>{const b=e.target.closest(".rtb button");if(b)e.preventDefault()});
+document.addEventListener("click",e=>{const b=e.target.closest(".rtb button");if(!b)return;const tb=b.closest(".rtb"),ed=$(tb.dataset.rte);if(ed)rtbExec(b.dataset.cmd,ed)});
+document.querySelectorAll("[data-rtb]").forEach(el=>{el.outerHTML=rtbHtml(el.dataset.rtb)});
 const itTitle=i=>i.title||(i.text||"").split("\n")[0].slice(0,50);
 const VW={s:"vShifts",a:"vAdd",n:"vNews",r:"vReels",f:"vFasel"};
 function setView(v){
@@ -1190,7 +1222,7 @@ function renderAdd(){
   $("captureOther").value=["idea","concept"].includes(capType)?capType:"";
   $("kti").placeholder=c?"اسم المفهوم (اختياري)":"عنوان مختصر (اختياري)";
   const labels={quote:["الاقتباس اللي عجبك","اكتب الجملة زي ما عجبتك...","جملة وقفتك وإنت بتسمع أو بتقرأ، احفظها ترجع لها."],app:["الفكرة اللي عايز تجربها","إيه الفكرة؟ وليه حابب تجربها؟","من السماع لخطوة في حياتك. احفظ الفكرة وحدد أول خطوة لو حابب."],question:["السؤال اللي بتسأله لنفسك","اكتب سؤالك هنا...","سؤال لسه بتفكر فيه، مش مطلوب تجاوبه دلوقتي. هتقدر تحفظ إجاباتك بعدين."],idea:["الفكرة","اكتب الفكرة بطريقتك...","فكرة عايز تحتفظ بيها وترجع تتأمل فيها."],concept:["شرح المفهوم","اشرحه لنفسك بطريقتك...","مصطلح عايز تفهمه، ومعاه مثال لو حابب."]};
-  const l=labels[capType];$("captureTextLabel").textContent=l[0];$("kt").placeholder=l[1];$("captureHint").textContent=l[2];
+  const l=labels[capType];$("captureTextLabel").textContent=l[0];$("kt").dataset.placeholder=l[1];$("captureHint").textContent=l[2];
   $("planWrap").hidden=capType!=="app";$("questionPrompts").hidden=capType!=="question";
   $("captureMessage").textContent="";
 }
@@ -1212,7 +1244,7 @@ function dat(lib){
   const k=kb(),B=id=>(bk(id)||{}).title||"";
   if(lib==="books")return{h:["الكتاب","المؤلف","النوع","الحالة","عدد الفوايد","آخر نشاط","الفوايد"],r:k.books.map(b=>({id:b.id,t:"b",c:[b.title,b.author||"",b.src==="audiobook"?"صوتي":"مقروء",b.status==="completed"?"مكتمل":"جاري",b.notes.length,keyOf(new Date(b.ts)),b.notes.map(x=>x.text).join(" | ")]}))};
   if(lib==="sessions")return{h:["التاريخ","الكتاب","الفكرة","أهم اقتباس","استفدت بإيه؟","التطبيق العملي"],r:k.sessions.slice().reverse().map(s=>({id:s.id,t:"s",c:[s.date,B(s.book),s.idea,s.quote,s.benefit,s.app]}))};
-  if(lib==="all")return{h:["النوع","العنوان","المحتوى","الكتاب","التاريخ"],r:k.items.slice().reverse().map(i=>({id:i.id,t:"i",c:[(KT[i.type]||{idea:"فكرة",quote:"اقتباس",concept:"مفهوم",app:"تطبيق",question:"سؤال"}[i.type]||i.type),itTitle(i),i.text,B(i.book),i.date]}))};
+  if(lib==="all")return{h:["النوع","العنوان","المحتوى","الكتاب","التاريخ"],r:k.items.slice().reverse().map(i=>({id:i.id,t:"i",c:[(KT[i.type]||{idea:"فكرة",quote:"اقتباس",concept:"مفهوم",app:"تطبيق",question:"سؤال"}[i.type]||i.type),itTitle(i),i.html?htmlToText(i.html):i.text,B(i.book),i.date]})).concat(k.books.flatMap(b=>(b.takeaways||[]).map(t=>({id:t.id,t:"i",c:["استفدت إيه",t.title||"",htmlToText(t.body),b.title,keyOf(new Date(t.ts))]}))))};
   const it=k.items.filter(i=>i.type===lib).slice().reverse();
   if(lib==="concept")return{h:["المصطلح","التعريف","المجال","مثال","الكتاب","التاريخ"],r:it.map(i=>({id:i.id,t:"i",c:[itTitle(i),i.text,i.field||"",i.example||"",B(i.book),i.date]}))};
   return lib==="quote"?{h:["الاقتباس","الكتاب","التاريخ"],r:it.map(i=>({id:i.id,t:"i",c:[i.text,B(i.book),i.date]}))}:{h:["العنوان","المحتوى","الكتاب","التاريخ"],r:it.map(i=>({id:i.id,t:"i",c:[itTitle(i),i.text,B(i.book),i.date]}))};
@@ -1226,12 +1258,14 @@ function bookCard(b){
   return '<article class="bk'+(done?" done":"")+'"><div class="bkh"><span class="bki '+(aud?"aud":"rd")+'">'+(aud?ICON_AUD:ICON_RD)+'</span><div class="bkt"><h4>'+esc(b.title)+"</h4><small>"+esc([b.author,aud?"كتاب صوتي":"كتاب مقروء"].filter(Boolean).join(" · "))+"</small></div>"+st+'</div><div class="bkm"><span class="pls" style="background:'+pc+'"></span><span>آخر نشاط '+agoTxt(b.ts)+"</span><span>·</span><span>"+nAr(bookMoments(b).length)+" لحظة محفوظة"+"</span></div>"+'<button type="button" class="btn v5-opennotebook" data-a="notebook" data-id="'+b.id+'">افتح كشكول الكتاب</button>'+notes+'<div class="bka"><button type="button" class="btn pri" data-a="note" data-id="'+b.id+'" style="flex:1">+ أضف من الكتاب</button><button type="button" class="btn" data-a="tg" data-id="'+b.id+'" style="flex:none;width:auto;padding:0 12px">'+(done?"رجّعها":"خلّصته ✓")+'</button><button type="button" class="btn del" data-a="del" data-t="b" data-id="'+b.id+'" aria-label="حذف الكتاب">×</button></div></article>';
 }
 function capture(){
-  const t=$("kt").value.trim(),ti=$("kti").value.trim();if(!t){$("captureMessage").textContent="اكتب حاجة الأول عشان تتحفظ في أثر.";$("kt").focus();return}
+  const ed=$("kt"),t=ed.innerText.trim(),ti=$("kti").value.trim();if(!t){$("captureMessage").textContent="اكتب حاجة الأول عشان تتحفظ في أثر.";ed.focus();return}
   const plan=capType==="app"?$("kplan").value.trim():"",text=t+(plan?"\n\nخطوة أجربها: "+plan:"");
   addItem(capType,ti||t.split("\n")[0].slice(0,50),text,$("kbs").value);
+  const it0=kb().items[kb().items.length-1],h0=cleanHtml(ed.innerHTML);
+  if(htmlToText(h0))it0.html=h0+(plan?'<div><br></div><div>خطوة أجربها: '+esc(plan)+'</div>':'');
   touch(bk($("kbs").value));
-  if(capType==="concept"){const it=kb().items[kb().items.length-1];it.field=$("kfd").value.trim();it.example=$("kxm").value.trim()}
-  save();["kt","kti","kfd","kxm","kplan"].forEach(i=>$(i).value="");const nu=kb().items[kb().items.length-1];const a=ath();a.k="all";a.s="all";save();setView("r");renderAth({rebuild:1,keep:nu.id});
+  if(capType==="concept"){it0.field=$("kfd").value.trim();it0.example=$("kxm").value.trim()}
+  save();ed.innerHTML="";["kti","kfd","kxm","kplan"].forEach(i=>$(i).value="");const nu=kb().items[kb().items.length-1];const a=ath();a.k="all";a.s="all";save();setView("r");renderAth({rebuild:1,keep:nu.id});
 }
 document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.v)));
 $("kch").addEventListener("click",e=>{const b=e.target.closest("button[data-t]");if(b){capType=b.dataset.t;renderAdd()}});
@@ -1798,6 +1832,13 @@ function bookMoments(b){
   });
   return rows.sort((a,b)=>b.ts-a.ts);
 }
+function tkSection(b){
+  const tks=b.takeaways||[];
+  return '<section class="v5-group"><div class="v5-grouphead"><h3>استفدت إيه <small>'+nAr(tks.length)+'</small></h3><button type="button" class="v5-link" data-tk="add">+ إضافة</button></div>'
+  +'<div id="tkForm" hidden><input class="kin" id="tkTitle" placeholder="عنوان القسم (مثلاً: أول خطوات الإعداد)" maxlength="80">'+rtbHtml("tkEd")+'<div class="kt rte" id="tkEd" contenteditable="true" data-placeholder="اكتب النقاط هنا..." style="min-height:120px;margin-top:6px"></div><div class="r2" style="margin-top:8px"><button class="btn pri" type="button" data-tk="save">احفظ</button><button class="btn" type="button" data-tk="cancel">إلغاء</button></div><p class="msg" id="tkMsg" role="status"></p></div>'
+  +(tks.length?tks.slice().reverse().map(t=>'<details class="v5-note"><summary>'+esc(t.title||"بدون عنوان")+'</summary><div class="rtxt">'+t.body+'</div><small>'+new Intl.DateTimeFormat('ar-EG',{dateStyle:'medium'}).format(new Date(t.ts))+'</small></details>').join(""):'<p class="ks">ملخصك الكامل من الكتاب بأقسامه، وكل قسم بعنوان يتفتح ويتقفل.</p>')
+  +'</section>';
+}
 let notebookId='';
 function openNotebook(id){
   const b=bk(id);if(!b)return;
@@ -1810,30 +1851,36 @@ function openNotebook(id){
     const list=rows.filter(i=>type==='app'?!['quote','question'].includes(i.type):i.type===type);
     return '<section class="v5-group"><div class="v5-grouphead"><h3>'+label+' <small>'+nAr(list.length)+'</small></h3><button type="button" class="v5-link" data-capture="'+type+'">+ إضافة</button></div>'+(list.length?list.map(i=>{
       const m=peek(i.id),body=i.text||i.title;
-      return '<article class="v5-note">'+(i.title&&i.title!==body&&!body.startsWith(i.title)?'<b>'+esc(i.title)+'</b>':'')+'<p>'+esc(body)+'</p><small>'+esc(i.date)+'</small>'+(i.type==='question'?'<button type="button" class="v5-link" data-answer="'+i.id+'">إجاباتي'+(m.answers?.length?' ('+nAr(m.answers.length)+')':'')+'</button>':i.type==='app'?'<span class="v5-small">'+(m.triedAt?'جرّبتها ✓':'لسه ما اتجرّبتش')+'</span>':'')+'</article>';
+      return '<article class="v5-note">'+(i.title&&i.title!==body&&!body.startsWith(i.title)?'<b>'+esc(i.title)+'</b>':'')+(i.html?'<div class="rtxt">'+i.html+'</div>':'<p>'+esc(body)+'</p>')+'<small>'+esc(i.date)+'</small>'+(i.type==='question'?'<button type="button" class="v5-link" data-answer="'+i.id+'">إجاباتي'+(m.answers?.length?' ('+nAr(m.answers.length)+')':'')+'</button>':i.type==='app'?'<span class="v5-small">'+(m.triedAt?'جرّبتها ✓':'لسه ما اتجرّبتش')+'</span>':'')+'</article>';
     }).join(''):'<p class="ks">'+({quote:'احفظ جملة وقفت معاك من الكتاب.',app:'فكرة نفسك تحولها لخطوة في حياتك.',question:'إيه اللي مقتنع بيه؟ وإيه اللي محتاج تفكر فيه أكتر؟'}[type])+'</p>')+'</section>';
-  }).join('');
+  }).join('')+tkSection(b);
   show('notebookSheet');$('notebookSheet').scrollTop=0;
 }
 $('captureBookNew').addEventListener('click',()=>openBookSheet(false,'kbs'));
 $('captureOther').addEventListener('change',e=>{if(e.target.value){capType=e.target.value;renderAdd()}});
 $('bookNotebookClose').addEventListener('click',()=>{closeAll();openLib()});
 $('bnBody').addEventListener('click',e=>{
+  const tk=e.target.closest('[data-tk]');if(tk){const act=tk.dataset.tk;
+    if(act==='add'){$('tkForm').hidden=false;$('tkTitle').focus()}
+    else if(act==='cancel'){$('tkForm').hidden=true}
+    else if(act==='save'){const body=cleanHtml($('tkEd').innerHTML);if(!htmlToText(body)){$('tkMsg').textContent='اكتب حاجة الأول.';return}
+      const bb=bk(notebookId);bb.takeaways.push({id:nid(),title:$('tkTitle').value.trim(),body,ts:Date.now()});touch(bb);save();openNotebook(notebookId)}
+    return}
   const add=e.target.closest('[data-capture]');if(add)return openCapture(notebookId,add.dataset.capture);
   const answer=e.target.closest('[data-answer]');if(answer){const c=cards().find(c=>c.id===answer.dataset.answer);if(c)openAnswer(c,true)}
 });
 let answerId='',answerFromBook=false;
 function renderAnswers(){
   const list=peek(answerId).answers||[];
-  $('qaList').innerHTML=list.length?list.slice().reverse().map(a=>'<article class="v5-note"><p>'+esc(a.t)+'</p><small>'+new Intl.DateTimeFormat('ar-EG',{dateStyle:'medium',timeStyle:'short'}).format(new Date(a.ts))+'</small></article>').join(''):'<p class="ks">لسه مفيش إجابة. ممكن ترجع تضيف إجابة جديدة لما رأيك يتغير.</p>';
+  $('qaList').innerHTML=list.length?list.slice().reverse().map(a=>'<article class="v5-note">'+(a.h?'<div class="rtxt">'+a.h+'</div>':'<p>'+esc(a.t)+'</p>')+'<small>'+new Intl.DateTimeFormat('ar-EG',{dateStyle:'medium',timeStyle:'short'}).format(new Date(a.ts))+'</small></article>').join(''):'<p class="ks">لسه مفيش إجابة. ممكن ترجع تضيف إجابة جديدة لما رأيك يتغير.</p>';
 }
 function openAnswer(c,fromBook=false){
   answerId=c.id;answerFromBook=fromBook;closeAll();$('qaQuestion').textContent=c.body||c.title;
-  $('qaText').value='';renderAnswers();show('answerSheet');$('qaText').focus();
+  $('qaText').innerHTML='';renderAnswers();show('answerSheet');$('qaText').focus();
 }
 $('qaSave').addEventListener('click',()=>{
-  const text=$('qaText').value.trim();if(!text){$('qaText').focus();return}
-  const m=meta(answerId);(m.answers||(m.answers=[])).push({id:nid(),t:text,ts:Date.now()});save();$('qaText').value='';renderAnswers();renderAth();
+  const ed=$('qaText'),text=ed.innerText.trim();if(!text){ed.focus();return}
+  const m=meta(answerId);(m.answers||(m.answers=[])).push({id:nid(),t:text,h:cleanHtml(ed.innerHTML),ts:Date.now()});save();ed.innerHTML='';renderAnswers();renderAth();
 });
 $('qaClose').addEventListener('click',()=>{const backToBook=answerFromBook;closeAll();if(backToBook)openNotebook(notebookId)});
 $('athC').addEventListener('click',e=>{
@@ -1904,7 +1951,7 @@ $('quizBody').addEventListener('click',e=>{
   }
 });
 
-$('questionPrompts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if($('kt').value.trim()&&!confirm('تستبدل السؤال المكتوب بالمثال ده؟'))return;$('kt').value=b.textContent;$('kt').focus()});
+$('questionPrompts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if($('kt').innerText.trim()&&!confirm('تستبدل السؤال المكتوب بالمثال ده؟'))return;$('kt').innerHTML='';$('kt').innerText=b.textContent;$('kt').focus()});
 
 /* v6: remote content is optional. Original data and storage key remain intact. */
 const V6_PREFIX='almihwar-v6-';
