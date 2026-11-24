@@ -80,11 +80,13 @@ var cv=localStorage.getItem("almihwar-roster-cv")==="a"?"a":"g";
 function deny(){document.title=" ";document.body.innerHTML="";}
 function build(DATA){
   var t=today();
-  var shifts=DATA.shifts||{},place=DATA.place||{name:"",color:"#E9C46A"};
-  var months={};Object.keys(shifts).forEach(function(k){months[k.slice(0,7)]=1});
+  var places=DATA.places||[],shifts=DATA.shifts||{};
+  var stamp=DATA.at||DATA.updatedAt;
+  var months={};
+  Object.keys(shifts).forEach(function(pid){Object.keys(shifts[pid]||{}).forEach(function(k){months[k.slice(0,7)]=1})});
   var mkeys=Object.keys(months).sort();
-  if(!mkeys.length){deny();return}
-  var h='<header class="top"><h1>'+esc(place.name||"روستر الشيفتات")+'</h1><p>روستر الشيفتات · تحديث: '+fDT.format(new Date(DATA.updatedAt))+'</p></header>'
+  if(!places.length||!mkeys.length){deny();return}
+  var h='<header class="top"><h1>روستر الشيفتات</h1><p>تحديث: '+fDT.format(new Date(stamp))+' · للعرض فقط</p></header>'
     +'<div class="vsw" id="vsw" role="group" aria-label="طريقة العرض"><button type="button" data-cv="a">عمودي</button><button type="button" data-cv="g">تقليدي</button></div>';
   mkeys.forEach(function(mk){
     var y=+mk.slice(0,4),m=+mk.slice(5,7)-1;
@@ -102,29 +104,29 @@ function build(DATA){
       var y=+mk.slice(0,4),m=+mk.slice(5,7)-1;
       var daysEl=document.querySelector('[data-days="'+mk+'"]'),wkEl=document.querySelector('[data-wk="'+mk+'"]');
       daysEl.classList.toggle("grid",cv==="g");wkEl.classList.toggle("on",cv==="g");
-      var h="",d,n,dt,k,tdy,v;
+      var h="",d,n,dt,k,tdy;
       if(cv==="g"){
         if(!wkEl.children.length)wkEl.innerHTML=[0,1,2,3,4,5,6].map(function(i){return "<span>"+fWn.format(new Date(2024,0,7+i))+"</span>"}).join("");
         for(var i=0;i<new Date(y,m,1).getDay();i++)h+='<div class="cell bl" aria-hidden="true"></div>';
         for(d=1,n=new Date(y,m+1,0).getDate();d<=n;d++){
           dt=new Date(y,m,d);k=keyOf(dt);tdy=dt.getTime()===t.getTime();
-          v=shifts[k]||"";
-          h+='<div class="cell'+(tdy?" td":"")+(dt<t?" ps":"")+'"><span class="n">'+d+"</span>"+(v?'<i class="pill" style="--c:'+place.color+'">'+v+"</i>":"")+"</div>";
+          var pills=places.map(function(p){var v=(shifts[p.id]||{})[k];return v?'<i class="pill" style="--c:'+p.color+'">'+v+"</i>":""}).join("");
+          h+='<div class="cell'+(tdy?" td":"")+(dt<t?" ps":"")+'"><span class="n">'+d+"</span>"+pills+"</div>";
         }
         daysEl.innerHTML=h;return;
       }
       for(d=1,n=new Date(y,m+1,0).getDate();d<=n;d++){
         dt=new Date(y,m,d);k=keyOf(dt);tdy=dt.getTime()===t.getTime();
-        v=shifts[k]||"";
-        h+='<div class="dr'+(tdy?" td":"")+(dt<t?" ps":"")+(v?"":" e")+'"><span class="dn"><small>'+fS.format(dt)+"</small><b>"+d+'</b></span><span class="ev">'+(v?'<span class="it" style="--c:'+place.color+'"><small>'+(SH[v]||v)+"</small><i></i><b>"+esc(place.name)+"</b></span>":"")+"</span></div>";
+        var its=places.map(function(p){var v=(shifts[p.id]||{})[k];return v?'<span class="it" style="--c:'+p.color+'"><small>'+(SH[v]||v)+"</small><i></i><b>"+esc(p.name)+"</b></span>":""}).join("");
+        h+='<div class="dr'+(tdy?" td":"")+(dt<t?" ps":"")+(its?"":" e")+'"><span class="dn"><small>'+fS.format(dt)+"</small><b>"+d+'</b></span><span class="ev">'+its+"</span></div>";
       }
       daysEl.innerHTML=h;
     });
-    $("lg").innerHTML='<span style="--c:'+place.color+'"><i></i>'+esc(place.name)+"</span>"+CODES.map(function(c){return "<span>"+c+" = "+SH[c]+"</span>"}).join("");
+    $("lg").innerHTML=places.map(function(p){return '<span style="--c:'+p.color+'"><i></i>'+esc(p.name)+"</span>"}).join("")+CODES.map(function(c){return "<span>"+c+" = "+SH[c]+"</span>"}).join("");
   }
 }
 fetch("roster.json?ts="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){
-  if(!j||!j.updatedAt||!j.shifts){deny();return}
+  if(!j||!(j.at||j.updatedAt)||!j.places||!j.shifts){deny();return}
   build(j);
 }).catch(function(){deny()});
 })();
