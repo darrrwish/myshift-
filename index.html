@@ -67,6 +67,30 @@ section{margin-top:14px}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .sr{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
 .scrim{position:fixed;inset:0;background:rgba(5,10,25,.5);z-index:10}
+#vArts .art-card{display:block;width:100%;text-align:start;background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer;font-family:inherit;color:var(--ink)}
+#vArts .art-card b{display:block;font-size:15px;margin-bottom:4px}
+#vArts .art-card span{font-size:12px;color:var(--mu)}
+#artImgs{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+#artImgs figure{width:76px;margin:0;text-align:center;position:relative}
+#artImgs img{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid var(--ln)}
+#artImgs figcaption{font-size:10px;color:var(--mu);direction:ltr}
+#artImgs figure button{position:absolute;top:-6px;inset-inline-start:-6px;width:20px;height:20px;border-radius:50%;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font-size:11px;line-height:1;cursor:pointer}
+#artReader{position:fixed;inset:0;z-index:14;background:var(--bg);display:flex;flex-direction:column}
+.ard-top{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 8px}
+#artPos{font-size:12px;color:var(--mu)}
+.ard-body{flex:1;overflow-y:auto;padding:4px 18px 10px;touch-action:pan-y}
+.ard-meta{margin-bottom:10px}
+.ard-meta h2{margin:0 0 4px;font-size:21px}
+.ard-meta span{font-size:12.5px;color:var(--mu)}
+.ard-md p{line-height:1.95;font-size:16px;margin:10px 0}
+.ard-md h2,.ard-md h3,.ard-md h4,.ard-md h5{margin:16px 0 6px;line-height:1.5}
+.ard-md h2{font-size:19px}.ard-md h3{font-size:17px}.ard-md h4,.ard-md h5{font-size:15.5px}
+.ard-md ul,.ard-md ol{margin:8px 0;padding-inline-start:22px;line-height:1.9}
+.ard-md hr{border:0;border-top:1px solid var(--ln);margin:16px 0}
+.ard-md img{max-width:100%;border-radius:12px;display:block;margin:10px auto}
+.ard-md a{color:var(--ac)}
+.ard-nav{display:flex;gap:10px;padding:8px 14px calc(12px + env(safe-area-inset-bottom,0px))}
+.ard-nav button{flex:1}
 .sheet{position:fixed;inset-inline:0;bottom:0;z-index:11;max-width:520px;margin:0 auto;max-height:88vh;overflow-y:auto;background:var(--sf);border-radius:22px 22px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.25)}
 .grip{width:40px;height:4px;border-radius:4px;background:var(--ln);margin:0 auto 14px}
 .sheet h2{margin:0 0 12px;font-size:18px}
@@ -577,8 +601,6 @@ body.reels{overflow:hidden}
 .v5-sourcehint{font-size:11px;margin:7px 0 0}
 .v5-extra{border-top:1px solid var(--ln);margin-top:16px;padding-top:12px}
 .v5-extra summary{cursor:pointer;font-size:12px;line-height:1.8;color:var(--mu)}
-.v5-session{padding:12px 2px;margin-top:16px}
-.v5-session>.card{margin-top:12px;border:1px solid var(--ln)}
 .v5-prompts{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
 .v5-prompts button{border:1px solid var(--ln);border-radius:10px;background:var(--sf);font-size:11px;padding:7px 9px;cursor:pointer}
 .v5-group{margin:20px 0 0;padding-top:10px;border-top:1px solid var(--ln)}
@@ -668,7 +690,7 @@ body.reels{overflow:hidden}
       <div id="planWrap" hidden><label class="fl" for="kplan">أول خطوة هتجربها (اختياري)</label><textarea class="kt" id="kplan" placeholder="خطوة صغيرة وواضحة تعملها إزاي؟" rows="2" style="min-height:70px;margin-top:6px"></textarea></div>
       <label class="fl" for="kbs">الكتاب المصدر <small>اختياري</small></label>
       <div class="v5-bookpick"><select class="ksel" id="kbs" aria-label="الكتاب المصدر"></select><button class="btn" type="button" id="captureBookNew">+ كتاب جديد</button></div>
-      <p class="ks v5-sourcehint">لو مش من كتاب، احفظه كملاحظة شخصية. مش محتاج تملأ جلسة كاملة.</p>
+      <p class="ks v5-sourcehint">لو مش من كتاب، احفظه كملاحظة شخصية.</p>
       <details class="v5-extra"><summary>تفاصيل وأنواع إضافية (اختياري)</summary>
         <input class="kin" id="kti" placeholder="عنوان مختصر (اختياري)" maxlength="80">
         <select class="ksel" id="captureOther" aria-label="أنواع إضافية"><option value="">الأنواع الأساسية فوق</option><option value="idea">فكرة للتأمل</option><option value="concept">مفهوم عايز أفهمه</option></select>
@@ -678,18 +700,6 @@ body.reels{overflow:hidden}
       <button class="btn pri" id="ksv" type="button" style="margin-top:16px">احفظ في أثر</button>
       <p class="msg" id="captureMessage" role="status"></p>
     </section>
-    <details class="v5-extra v5-session"><summary>عايز تسجّل جلسة كاملة؟</summary>
-    <section class="card">
-      <h2 class="kh">جلسة قراءة بالتفصيل</h2><p class="ks">بعد كل جلسة استماع أو قراءة. هنحفظها كجلسة، ونطلع منها بطاقات في «أثر».</p>
-      <select class="ksel" id="sbk" aria-label="الكتاب" style="margin-top:0"></select>
-      <input class="kin" id="sid" placeholder="الفكرة (مثلاً: تأثير البلاسيبو والنوسيبو)" maxlength="120">
-      <textarea class="kt" id="sq" placeholder="أهم اقتباس" style="min-height:64px;margin-top:8px"></textarea>
-      <textarea class="kt" id="sbe" placeholder="استفدت بإيه؟" style="min-height:64px;margin-top:8px"></textarea>
-      <textarea class="kt" id="sap" placeholder="التطبيق العملي" style="min-height:64px;margin-top:8px"></textarea>
-      <button class="btn pri" id="ssv" type="button" style="margin-top:12px">حفظ الجلسة</button>
-      <p class="msg" id="smsg" role="status"></p>
-    </section>
-    </details>
   </div>
   <div id="vFasel" hidden>
     <header class="v5-faselhead"><span class="v5-kicker">خد لك فاصل</span><h2>فاصل</h2><p class="ks">ذكاء ومعلومات، على مهلك.</p></header>
@@ -700,6 +710,11 @@ body.reels{overflow:hidden}
     <div class="chips" id="nch"></div>
     <p class="ks" id="nst" role="status"></p>
     <div id="nls"></div>
+  </div>
+  <div id="vArts" hidden>
+    <header class="v5-faselhead"><span class="v5-kicker">ملخصات ومقالات بقلمك</span><h2>مقالات</h2><p class="ks">اكتب بالماركداون وضيف صور من المعرض، واسحب يمين وشمال بين المقالات.</p></header>
+    <button class="btn pri" id="artNew" type="button">+ مقال جديد</button>
+    <div id="artList" style="margin-top:12px"></div>
   </div>
 </div>
 
@@ -726,6 +741,7 @@ body.reels{overflow:hidden}
     <button type="button" data-v="r" aria-label="أثر: قصص معرفية"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="4"/><path d="M10 9.5l5 3-5 3z"/></svg><span>أثر</span></button>
     <button type="button" data-v="f" aria-label="فاصل: فوازير باختيارات"><svg viewBox="0 0 24 24"><path d="M9 6a3 3 0 0 1 6 1c0 2-3 2-3 5"/><path d="M12 16h.01"/><rect x="3" y="2" width="18" height="20" rx="6"/></svg><span>فاصل</span></button>
     <button type="button" data-v="n" aria-label="الأخبار"><svg viewBox="0 0 24 24"><path d="M5 5h11v14H7a2 2 0 0 1-2-2zM16 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/></svg><span>الأخبار</span></button>
+    <button type="button" data-v="m" aria-label="مقالات"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg><span>مقالات</span></button>
   </div>
   <button type="button" data-v="a" class="fab" aria-label="تسجيل"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
 </nav>
@@ -736,6 +752,25 @@ body.reels{overflow:hidden}
     <button type="button" class="nr-zone nr-prev" id="nrPrev" aria-label="الخبر السابق"></button><button type="button" class="nr-zone nr-next" id="nrNext" aria-label="الخبر التالي"></button>
     <div class="nr-copy" id="nrCopy"><div class="nr-reading" id="nrReading"><div class="nr-status" id="nrStatus" role="status"></div><h2 id="nrTitle"></h2><p id="nrText"></p></div><div class="nr-actions"><a id="nrLink" target="_blank" rel="noopener noreferrer" title="فتح مصدر الخبر" aria-label="فتح مصدر الخبر"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg></a><button type="button" id="nrSave" title="حفظ الخبر لمدة ٧ أيام" aria-label="حفظ الخبر لمدة ٧ أيام"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-4-6 4z"/></svg></button></div></div>
   </div>
+</div>
+<div class="sheet" id="artSheet" role="dialog" aria-modal="true" aria-label="مقال جديد" hidden>
+  <h2>مقال جديد</h2>
+  <input class="kin" id="artTitle" placeholder="عنوان المقال" maxlength="120">
+  <select class="ksel" id="artBook" aria-label="الكتاب" style="margin-top:8px"></select>
+  <textarea class="kt" id="artMd" placeholder="اكتب المقال بالماركداون..." style="min-height:200px;margin-top:8px"></textarea>
+  <p class="ks" style="margin-top:8px">ماركداون: <bdir dir="ltr" style="unicode-bidi:embed"># عنوان، ## أصغر، **عريض**، *مائل*، ~~شطب~~، - قايمة، 1. ترقيم، --- فاصل</bdir>. الصورة بتنزل فين ما يكون كودها في النص.</p>
+  <div class="r2" style="margin-top:8px">
+    <label class="btn" style="cursor:pointer;margin:0">+ صورة من المعرض<input class="sr" type="file" id="artImg" accept="image/*"></label>
+    <button class="btn" id="artCancel" type="button" style="margin:0">إلغاء</button>
+    <button class="btn pri" id="artSave" type="button" style="margin:0">حفظ المقال</button>
+  </div>
+  <div id="artImgs"></div>
+  <p class="msg" id="artMsg" role="status"></p>
+</div>
+<div id="artReader" role="dialog" aria-modal="true" aria-label="قارئ المقالات" hidden>
+  <div class="ard-top"><button class="ib" id="artClose" type="button" aria-label="إغلاق المقال"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span id="artPos"></span></div>
+  <div class="ard-body" id="artBody"></div>
+  <div class="ard-nav"><button class="btn" id="artPrev" type="button">‹ السابق</button><button class="btn pri" id="artNext" type="button">التالي ›</button></div>
 </div>
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="daySheet" role="dialog" aria-modal="true" hidden>
@@ -1025,7 +1060,7 @@ const renderAll=()=>{renderNext();renderTot();renderCal();renderLg()};
 
 /* Sheets */
 function show(id){$("scrim").hidden=false;$(id).hidden=false}
-function closeAll(){["scrim","daySheet","setSheet","bookSheet","newsSheet","noteSheet","libSheet","srcSheet","reflSheet","notebookSheet","answerSheet"].forEach(i=>$(i).hidden=true);editKey=null;back=false}
+function closeAll(){["scrim","daySheet","setSheet","bookSheet","newsSheet","noteSheet","libSheet","srcSheet","reflSheet","notebookSheet","answerSheet","artSheet"].forEach(i=>$(i).hidden=true);editKey=null;back=false}
 function renderDay(){
   $("db").innerHTML=state.places.map(p=>{
     const cur=(state.shifts[p.id]||{})[editKey]||"";
@@ -1169,7 +1204,7 @@ const t0=today();viewMonth=new Date(t0.getFullYear(),t0.getMonth(),1);
 
 /* Knowledge library */
 const KT={quote:"اقتباس",app:"فكرة أجربها",question:"سؤال لنفسي",idea:"فكرة",concept:"مفهوم"},LT={books:"الكتب",idea:"الأفكار",quote:"الاقتباسات",concept:"المفاهيم",app:"التطبيقات",question:"الأسئلة",sessions:"الجلسات"},RV=[1,7,30,90],RL=["بعد يوم: افتكرها من غير ما تبص","بعد أسبوع: اشرحها بأسلوبك","بعد شهر: اربطها بفكرة تانية","بعد ٣ شهور: لسه بتستفيد منها؟"];
-const kb=()=>{const k=state.kb||(state.kb={});k.books=k.books||[];k.items=k.items||[];k.sessions=k.sessions||[];k.books.forEach(b=>{if(!Array.isArray(b.notes))b.notes=[];if(!Array.isArray(b.takeaways))b.takeaways=[];if(!b.ts)b.ts=b.date&&/^\d{4}-\d\d-\d\d$/.test(b.date)?parseKey(b.date).getTime():Date.now()});return k};
+const kb=()=>{const k=state.kb||(state.kb={});k.books=k.books||[];k.items=k.items||[];k.sessions=k.sessions||[];k.articles=k.articles||[];k.books.forEach(b=>{if(!Array.isArray(b.notes))b.notes=[];if(!Array.isArray(b.takeaways))b.takeaways=[];if(!b.ts)b.ts=b.date&&/^\d{4}-\d\d-\d\d$/.test(b.date)?parseKey(b.date).getTime():Date.now()});return k};
 const STALE=7;
 const daysSince=ts=>Math.max(0,Math.floor((Date.now()-(ts||0))/864e5));
 const agoTxt=ts=>{const d=daysSince(ts);return d<=0?"النهارده":d===1?"إمبارح":d===2?"من يومين":d<=10?"من "+d+" أيام":"من "+d+" يوم"};
@@ -1202,14 +1237,113 @@ document.addEventListener("mousedown",e=>{const b=e.target.closest(".rtb button"
 document.addEventListener("click",e=>{const b=e.target.closest(".rtb button");if(!b)return;const tb=b.closest(".rtb"),ed=$(tb.dataset.rte);if(ed)rtbExec(b.dataset.cmd,ed)});
 document.querySelectorAll("[data-rtb]").forEach(el=>{el.outerHTML=rtbHtml(el.dataset.rtb)});
 const itTitle=i=>i.title||(i.text||"").split("\n")[0].slice(0,50);
-const VW={s:"vShifts",a:"vAdd",n:"vNews",r:"vReels",f:"vFasel"};
+const VW={s:"vShifts",a:"vAdd",n:"vNews",r:"vReels",f:"vFasel",m:"vArts"};
 function setView(v){
   state.view=v;save();
   Object.keys(VW).forEach(x=>$(VW[x]).hidden=x!==v);
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("sel",b.dataset.v===v));
   document.body.classList.toggle("reels",v==="r");
-  if(v==="a")renderAdd();if(v==="r")renderAth();if(v==="n")renderNews();if(v==="f")renderQuiz();scrollTo(0,0);
+  if(v==="m")renderArts();if(v==="a")renderAdd();if(v==="r")renderAth();if(v==="n")renderNews();if(v==="f")renderQuiz();scrollTo(0,0);
 }
+function mdRender(src,imgs){
+  imgs=imgs||{};
+  const inline=t=>{
+    t=esc(t);
+    t=t.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g,(m,a,u)=>{let s="";if(/^img\d+$/.test(u)&&imgs[u])s=imgs[u];else if(/^https?:\/\//.test(u)||/^data:image\//.test(u))s=u;else return m;return '<img src="'+s+'" alt="'+a+'" loading="lazy">'});
+    t=t.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    t=t.replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>");
+    t=t.replace(/\*([^*\n]+)\*/g,"<i>$1</i>");
+    t=t.replace(/~~([^~]+)~~/g,"<s>$1</s>");
+    return t};
+  const lines=(src||"").replace(/\r/g,"").split("\n");
+  let h="",list=null;
+  const close=()=>{if(list){h+=list==="ul"?"</ul>":"</ol>";list=null}};
+  for(const raw of lines){
+    const line=raw.replace(/\s+$/,"");
+    let m;
+    if(m=line.match(/^\s*(#{1,4})\s+(.+)/)){close();const lv=Math.min(5,m[1].length+1);h+="<h"+lv+">"+inline(m[2])+"</h"+lv+">"}
+    else if(/^\s*---+\s*$/.test(line)){close();h+="<hr>"}
+    else if(m=line.match(/^\s*[-*]\s+(.+)/)){if(list!=="ul"){close();h+="<ul>";list="ul"}h+="<li>"+inline(m[1])+"</li>"}
+    else if(m=line.match(/^\s*\d+[.)]\s+(.+)/)){if(list!=="ol"){close();h+="<ol>";list="ol"}h+="<li>"+inline(m[1])+"</li>"}
+    else if(!line.trim())close();
+    else{close();h+="<p>"+inline(line)+"</p>"}
+  }
+  close();
+  return h;
+}
+const artDate=ts=>new Date(ts).toLocaleDateString("ar-EG",{day:"numeric",month:"long",year:"numeric"});
+function renderArts(){
+  const k=kb(),el=$("artList");
+  const arr=k.articles.slice().sort((a,b)=>b.ts-a.ts);
+  if(!arr.length){el.innerHTML='<p class="ks" style="text-align:center;padding:28px 0">لسه مفيش مقالات. ابدأ بأول ملخص بقلمك.</p>';return}
+  el.innerHTML=arr.map(a=>{const b=bk(a.book);return '<button type="button" class="art-card" data-art="'+a.id+'"><b>'+esc(a.title)+'</b><span>'+(b?esc(b.title):"مقال عام")+" · "+artDate(a.ts)+"</span></button>"}).join("");
+}
+$("artList").addEventListener("click",e=>{const c=e.target.closest("[data-art]");if(c)openArt(c.dataset.art)});
+let artImgs=[];
+function artBookOpts(){$("artBook").innerHTML='<option value="">مقال عام، من غير كتاب</option>'+kb().books.map(b=>'<option value="'+b.id+'">'+esc(b.title)+"</option>").join("")}
+function renderArtImgs(){$("artImgs").innerHTML=artImgs.map((im,i)=>'<figure><img src="'+im.data+'" alt=""><figcaption>'+im.key+'</figcaption><button type="button" data-artimg="'+i+'" aria-label="شيل الصورة">×</button></figure>').join("")}
+$("artImgs").addEventListener("click",e=>{const b=e.target.closest("[data-artimg]");if(!b)return;artImgs.splice(+b.dataset.artimg,1);renderArtImgs()});
+function artInsertAtCursor(t,s){const a=t.selectionStart==null?t.value.length:t.selectionStart,b=t.selectionEnd==null?a:t.selectionEnd;t.value=t.value.slice(0,a)+s+t.value.slice(b);t.selectionStart=t.selectionEnd=a+s.length;t.focus()}
+$("artNew").addEventListener("click",()=>{artImgs=[];$("artTitle").value="";$("artMd").value="";$("artMsg").textContent="";artBookOpts();renderArtImgs();show("artSheet");$("artTitle").focus()});
+$("artCancel").addEventListener("click",()=>closeAll());
+$("artImg").addEventListener("change",e=>{
+  const f=e.target.files&&e.target.files[0];e.target.value="";
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{const img=new Image();img.onload=()=>{
+    const M=1200,sc=Math.min(1,M/Math.max(img.width,img.height));
+    const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    const d=c.toDataURL("image/jpeg",.82);
+    let n=1;while(artImgs.some(x=>x.key==="img"+n))n++;
+    const key="img"+n;
+    artImgs.push({key,data:d});
+    artInsertAtCursor($("artMd"),"\n!["+($("artTitle").value.trim()||"صورة")+"]("+key+")\n");
+    renderArtImgs()};
+    img.src=r.result};
+  r.readAsDataURL(f);
+});
+$("artSave").addEventListener("click",()=>{
+  const md=$("artMd").value.trim();
+  if(!md){$("artMsg").textContent="اكتب المقال الأول.";return}
+  const title=$("artTitle").value.trim()||md.split("\n")[0].replace(/^#+\s*/,"").slice(0,60)||"مقال من غير عنوان";
+  const images={};artImgs.forEach(im=>{images[im.key]=im.data});
+  const book=$("artBook").value;
+  kb().articles.push({id:nid(),book,title,md,images,ts:Date.now()});
+  if(book)touch(bk(book));
+  save();closeAll();renderArts();say("اتحفظ المقال ✅");
+});
+let artQ=[],artSeen=new Set(),artIdx=0;
+function openArt(id){artQ=[id];artSeen=new Set([id]);artIdx=0;$("artReader").hidden=false;renderArt()}
+function closeArt(){$("artReader").hidden=true}
+function renderArt(){
+  const k=kb(),a=k.articles.find(x=>x.id===artQ[artIdx]);
+  if(!a){closeArt();return}
+  const b=bk(a.book);
+  $("artBody").innerHTML='<div class="ard-meta"><h2>'+esc(a.title)+"</h2><span>"+(b?esc(b.title):"مقال عام")+" · "+artDate(a.ts)+"</span></div>"+'<div class="ard-md">'+mdRender(a.md,a.images)+"</div>";
+  $("artPos").textContent=(artIdx+1)+" / "+k.articles.length;
+  $("artBody").scrollTop=0;
+}
+function artNext(){
+  const k=kb();
+  if(artIdx<artQ.length-1){artIdx++;renderArt();return}
+  const rest=k.articles.filter(a=>!artSeen.has(a.id));
+  if(!rest.length){say("شفت كل المقالات 👏");return}
+  const a=rest[Math.floor(Math.random()*rest.length)];
+  artQ.push(a.id);artSeen.add(a.id);artIdx++;renderArt();
+}
+function artPrev(){if(artIdx>0){artIdx--;renderArt()}else say("ده أول مقال")}
+$("artNext").addEventListener("click",artNext);
+$("artPrev").addEventListener("click",artPrev);
+$("artClose").addEventListener("click",closeArt);
+$("artReader").addEventListener("keydown",e=>{if(e.key==="Escape")closeArt();else if(e.key==="ArrowLeft")artNext();else if(e.key==="ArrowRight")artPrev()});
+let artTX=0,artTY=0;
+$("artReader").addEventListener("touchstart",e=>{artTX=e.changedTouches[0].clientX;artTY=e.changedTouches[0].clientY},{passive:true});
+$("artReader").addEventListener("touchend",e=>{
+  const dx=e.changedTouches[0].clientX-artTX,dy=e.changedTouches[0].clientY-artTY;
+  if(Math.abs(dy)>Math.abs(dx))return;
+  if(dx<-50)artNext();else if(dx>50)artPrev();
+},{passive:true});
 function bookOpts(sel,first){
   const el=$(sel),cur=el.value;
   el.innerHTML='<option value="">'+first+'</option>'+kb().books.map(b=>'<option value="'+b.id+'">'+esc(b.title)+"</option>").join("")+'<option value="__new">+ كتاب جديد</option>';
@@ -1217,7 +1351,7 @@ function bookOpts(sel,first){
 }
 function renderAdd(){
   $("kch").innerHTML=["quote","app","question"].map(t=>'<button type="button" data-t="'+t+'" class="'+(t===capType?"sel":"")+'" aria-pressed="'+(t===capType)+'">'+KT[t]+"</button>").join("");
-  bookOpts("sbk","اختار الكتاب");bookOpts("kbs","ملاحظة شخصية، من غير كتاب");
+  bookOpts("kbs","ملاحظة شخصية، من غير كتاب");
   const c=capType==="concept";$("kfd").hidden=!c;$("kxm").hidden=!c;
   $("captureOther").value=["idea","concept"].includes(capType)?capType:"";
   $("kti").placeholder=c?"اسم المفهوم (اختياري)":"عنوان مختصر (اختياري)";
@@ -1228,17 +1362,6 @@ function renderAdd(){
 }
 function addItem(type,title,text,book,session){
   kb().items.push({id:nid(),type,title,text,book,session:session||"",date:keyOf(today()),ts:Date.now(),r:0});
-}
-function saveSession(){
-  const g=id=>$(id).value.trim(),f={idea:g("sid"),quote:g("sq"),benefit:g("sbe"),app:g("sap")},b=$("sbk").value;
-  if(!f.idea&&!f.quote&&!f.benefit&&!f.app){$("smsg").textContent="اكتب خانة واحدة على الأقل.";return}
-  const id=nid(),s={id,book:b,date:keyOf(today()),ts:Date.now(),idea:f.idea,quote:f.quote,benefit:f.benefit,app:f.app};
-  kb().sessions.push(s);touch(bk(b));
-  if(f.idea||f.benefit)addItem("idea",f.idea||f.benefit.slice(0,50),f.benefit||f.idea,b,id);
-  if(f.quote)addItem("quote","",f.quote,b,id);
-  if(f.app)addItem("app",f.idea?"تطبيق: "+f.idea:"",f.app,b,id);
-  save();["sid","sq","sbe","sap"].forEach(i=>$(i).value="");
-  $("smsg").textContent="تم حفظ الجلسة وتحويلها لبطاقات في «أثر».";
 }
 function dat(lib){
   const k=kb(),B=id=>(bk(id)||{}).title||"";
@@ -1269,9 +1392,8 @@ function capture(){
 }
 document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.v)));
 $("kch").addEventListener("click",e=>{const b=e.target.closest("button[data-t]");if(b){capType=b.dataset.t;renderAdd()}});
-$("ssv").addEventListener("click",saveSession);
 $("ksv").addEventListener("click",capture);
-["sbk","kbs"].forEach(id=>$(id).addEventListener("change",e=>{if(e.target.value==="__new"){e.target.value="";pendingBook=id;["bti","bau"].forEach(i=>$(i).value="");show("bookSheet");$("bti").focus()}}));
+["kbs"].forEach(id=>$(id).addEventListener("change",e=>{if(e.target.value==="__new"){e.target.value="";pendingBook=id;["bti","bau"].forEach(i=>$(i).value="");show("bookSheet");$("bti").focus()}}));
 /* ===== ATHAR Moments ===== */
 const ICO={
   heart:'<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
