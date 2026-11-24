@@ -819,6 +819,23 @@ body.reels{overflow:hidden}
     <button class="btn" id="bkp" type="button">نسخ احتياطي</button>
     <label class="btn" style="cursor:pointer">استرجاع<input class="sr" type="file" id="rst" accept=".json,application/json"></label>
   </div>
+  <h3>مشاركة الروستر (لينك حي)</h3>
+  <p class="msg" style="text-align:right;margin-top:0">لينك للعرض بس، بيتحدث لوحده كل ما تعدّل الروستر. اللي يفتحه يشوف الروستر بس، وأي حاجة تانية غير مصرح بيها. محتاج مفتاح GitHub مرة واحدة.</p>
+  <div id="shrSetup">
+    <input class="kin" id="shrTok" type="password" dir="ltr" placeholder="مفتاح GitHub (PAT)" autocomplete="off">
+    <button class="btn pri" id="shrOn" type="button" style="margin-top:8px">حفظ المفتاح وتفعيل المشاركة</button>
+  </div>
+  <div id="shrLive" hidden>
+    <div class="r2">
+      <input class="kin" id="shrUrl" type="text" dir="ltr" readonly>
+      <button class="btn" id="shrCp" type="button">نسخ اللينك</button>
+    </div>
+    <div class="r2" style="margin-top:8px">
+      <button class="btn" id="shrSync" type="button">تحديث دلوقتي</button>
+      <button class="btn dn" id="shrOff" type="button">إيقاف وحذف اللينك</button>
+    </div>
+  </div>
+  <p class="msg" id="shrm" role="status"></p>
   <h3>ملف Excel</h3>
   <div class="r2">
     <button class="btn" id="exp" type="button">تصدير الشهر المعروض</button>
@@ -856,7 +873,75 @@ function load(){
   return{places:[{id:"p1",name:"العباسية",color:PAL[0],sys:"cal"},{id:"p2",name:"كليوباترا",color:PAL[1],sys:"mid"}],shifts:{p1:{},p2:{}}};
 }
 let state=load(),viewMonth,editKey=null,pastKey="";
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}shSchedule()};
+/* Roster live share: pushes roster only (places+shifts) to roster.json on GitHub. Token stays on this device. */
+var SHCFG_KEY="almihwar-gh-share",shTimer=null,shSha=null,shBusy=false,shQueued=false;
+const SHR_URL="https://darrrwish.github.io/myshift-/roster.html";
+function shCfg(){try{return JSON.parse(localStorage.getItem(SHCFG_KEY))||{}}catch(_){return{}}}
+function shSetCfg(c){try{localStorage.setItem(SHCFG_KEY,JSON.stringify(c))}catch(_){}}
+function shSay(t){$("shrm").textContent=t}
+function shSchedule(){const c=shCfg();if(!c.on||!c.token)return;clearTimeout(shTimer);shTimer=setTimeout(()=>{shPush(false)},2500)}
+function rosterPayload(){return{app:"almihwar-roster",v:1,at:new Date().toISOString(),places:state.places.map(p=>({id:p.id,name:p.name,color:p.color,sys:p.sys})),shifts:Object.fromEntries(state.places.map(p=>[p.id,state.shifts[p.id]||{}]))}}
+async function shPush(retry){
+  const c=shCfg();if(!c.on||!c.token)return;
+  if(shBusy){shQueued=true;return}
+  shBusy=true;
+  try{
+    const base="https://api.github.com/repos/darrrwish/myshift-/contents/roster.json";
+    const h={Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json"};
+    if(!shSha){const g=await fetch(base,{headers:h});
+      if(g.ok){const j=await g.json();shSha=j.sha}
+      else if(g.status===401||g.status===403)throw new Error("auth");
+      else if(g.status!==404)throw new Error("read");}
+    const body=btoa(unescape(encodeURIComponent(JSON.stringify(rosterPayload()))));
+    const r=await fetch(base,{method:"PUT",headers:Object.assign({},h,{"Content-Type":"application/json"}),body:JSON.stringify(Object.assign({message:"تحديث الروستر",content:body},shSha?{sha:shSha}:{}))});
+    if((r.status===409||r.status===422)&&!retry){shSha=null;shBusy=false;return shPush(true)}
+    if(r.status===401||r.status===403)throw new Error("auth");
+    if(!r.ok)throw new Error("write");
+    const j=await r.json();shSha=j&&j.content?j.content.sha:null;
+    shSay("اللينك اتحدث ✓");
+  }catch(e){
+    if(e&&e.message==="auth")shSay("المفتاح مش شغال أو صلاحيته خلصت. دوس «إيقاف وحذف اللينك» وجرب مفتاح جديد.");
+    else shSay("تعذّر تحديث اللينك. هيحاول تاني مع أي تعديل.");
+  }
+  shBusy=false;
+  if(shQueued){shQueued=false;shPush(false)}
+}
+async function shDelete(){
+  const c=shCfg();if(!c.token)return false;
+  try{
+    const base="https://api.github.com/repos/darrrwish/myshift-/contents/roster.json";
+    const h={Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json"};
+    const g=await fetch(base,{headers:h});let sha=null;
+    if(g.ok)sha=(await g.json()).sha;else if(g.status===404)return true;else return false;
+    const r=await fetch(base,{method:"DELETE",headers:Object.assign({},h,{"Content-Type":"application/json"}),body:JSON.stringify({message:"إيقاف مشاركة الروستر",sha:sha})});
+    return r.ok;
+  }catch(_){return false}
+}
+function shPaint(){
+  const c=shCfg(),live=!!(c.on&&c.token);
+  $("shrSetup").hidden=live;$("shrLive").hidden=!live;
+  if(live)$("shrUrl").value=SHR_URL;
+}
+$("shrOn").addEventListener("click",async()=>{
+  const t=$("shrTok").value.trim();
+  if(!t){shSay("اكتب المفتاح الأول.");return}
+  shSetCfg({on:true,token:t});shSha=null;shPaint();shSay("بيحاول أول رفع للروستر...");
+  await shPush(false);
+});
+$("shrCp").addEventListener("click",async()=>{
+  const u=$("shrUrl");
+  try{await navigator.clipboard.writeText(u.value);shSay("اللينك اتنسخ ✓")}
+  catch(_){u.removeAttribute("readonly");u.select();try{document.execCommand("copy");shSay("اللينك اتنسخ ✓")}catch(e){shSay("انسخ اللينك بإيدك من الخانة.")}u.setAttribute("readonly","")}
+});
+$("shrSync").addEventListener("click",()=>{shSha=null;shPush(false)});
+$("shrOff").addEventListener("click",async()=>{
+  if(!confirm("هيتم حذف اللينك نهائي، وأي حد معاه هيشوف «غير مصرح». متأكد؟"))return;
+  const ok=await shDelete();
+  shSetCfg({on:false,token:""});shSha=null;$("shrTok").value="";shPaint();
+  shSay(ok?"اللينك اتلغى واتحذف ✓":"المشاركة اتوقفت، بس تعذّر حذف الملف من GitHub. جرب تاني.");
+});
+shPaint();
 const say=t=>{$("msg").textContent=t};
 
 /* Periods: "mid" runs 16th to 15th of next month, "cal" is the calendar month */
@@ -1663,7 +1748,17 @@ document.addEventListener('visibilitychange',()=>{if(nrOpen()){nrLast=0;nrUpdate
 /* Backup / restore */
 $("bkp").addEventListener("click",()=>{
   const d=new Date(),n="almihwar-"+d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")+".json";
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({app:"almihwar",v:1,at:d.toISOString(),data:state})],{type:"application/json"}));a.download=n;
+  const payload=JSON.stringify({app:"almihwar",v:1,at:d.toISOString(),data:state});
+  if(window.AndroidBackup&&AndroidBackup.available&&AndroidBackup.available()){
+    try{
+      const b=btoa(unescape(encodeURIComponent(payload)));
+      const r=AndroidBackup.saveAndShare(n,b,"application/json");
+      if(r==="ok"){say("اتحفظت النسخة في التنزيلات، وتقدر تبعتها لدرايف من قايمة المشاركة: "+n);return}
+      if(r==="saved"){return}
+      say("تعذّر الحفظ من التطبيق، هنزّلها بالطريقة العادية.");
+    }catch(_){}
+  }
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([payload],{type:"application/json"}));a.download=n;
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);say("اتحفظت النسخة: "+n);
 });
 const idc=v=>typeof v==="string"?v.replace(/[^\w-]/g,"").slice(0,40):v;
