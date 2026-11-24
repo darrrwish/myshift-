@@ -91,6 +91,7 @@ section{margin-top:14px}
 .ard-md a{color:var(--ac)}
 .ard-nav{display:flex;gap:10px;padding:8px 14px calc(12px + env(safe-area-inset-bottom,0px))}
 .ard-nav button{flex:1}
+.ard-acts{display:flex;gap:8px;align-items:center}
 .sheet{position:fixed;inset-inline:0;bottom:0;z-index:11;max-width:520px;margin:0 auto;max-height:88vh;overflow-y:auto;background:var(--sf);border-radius:22px 22px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.25)}
 .grip{width:40px;height:4px;border-radius:4px;background:var(--ln);margin:0 auto 14px}
 .sheet h2{margin:0 0 12px;font-size:18px}
@@ -754,7 +755,7 @@ body.reels{overflow:hidden}
   </div>
 </div>
 <div class="sheet" id="artSheet" role="dialog" aria-modal="true" aria-label="مقال جديد" hidden>
-  <h2>مقال جديد</h2>
+  <h2 id="artSheetTitle">مقال جديد</h2>
   <input class="kin" id="artTitle" placeholder="عنوان المقال" maxlength="120">
   <select class="ksel" id="artBook" aria-label="الكتاب" style="margin-top:8px"></select>
   <textarea class="kt" id="artMd" placeholder="اكتب المقال بالماركداون..." style="min-height:200px;margin-top:8px"></textarea>
@@ -768,7 +769,7 @@ body.reels{overflow:hidden}
   <p class="msg" id="artMsg" role="status"></p>
 </div>
 <div id="artReader" role="dialog" aria-modal="true" aria-label="قارئ المقالات" hidden>
-  <div class="ard-top"><button class="ib" id="artClose" type="button" aria-label="إغلاق المقال"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span id="artPos"></span></div>
+  <div class="ard-top"><button class="ib" id="artClose" type="button" aria-label="إغلاق المقال"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="ard-acts"><span id="artPos"></span><button class="ib" id="artEdit" type="button" aria-label="تعديل المقال"><svg viewBox="0 0 24 24"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/></svg></button><button class="ib" id="artDel" type="button" aria-label="مسح المقال"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button></div></div>
   <div class="ard-body" id="artBody"></div>
   <div class="ard-nav"><button class="btn" id="artPrev" type="button">‹ السابق</button><button class="btn pri" id="artNext" type="button">التالي ›</button></div>
 </div>
@@ -1279,12 +1280,13 @@ function renderArts(){
   el.innerHTML=arr.map(a=>{const b=bk(a.book);return '<button type="button" class="art-card" data-art="'+a.id+'"><b>'+esc(a.title)+'</b><span>'+(b?esc(b.title):"مقال عام")+" · "+artDate(a.ts)+"</span></button>"}).join("");
 }
 $("artList").addEventListener("click",e=>{const c=e.target.closest("[data-art]");if(c)openArt(c.dataset.art)});
+let artEditId='';
 let artImgs=[];
 function artBookOpts(){$("artBook").innerHTML='<option value="">مقال عام، من غير كتاب</option>'+kb().books.map(b=>'<option value="'+b.id+'">'+esc(b.title)+"</option>").join("")}
 function renderArtImgs(){$("artImgs").innerHTML=artImgs.map((im,i)=>'<figure><img src="'+im.data+'" alt=""><figcaption>'+im.key+'</figcaption><button type="button" data-artimg="'+i+'" aria-label="شيل الصورة">×</button></figure>').join("")}
 $("artImgs").addEventListener("click",e=>{const b=e.target.closest("[data-artimg]");if(!b)return;artImgs.splice(+b.dataset.artimg,1);renderArtImgs()});
 function artInsertAtCursor(t,s){const a=t.selectionStart==null?t.value.length:t.selectionStart,b=t.selectionEnd==null?a:t.selectionEnd;t.value=t.value.slice(0,a)+s+t.value.slice(b);t.selectionStart=t.selectionEnd=a+s.length;t.focus()}
-$("artNew").addEventListener("click",()=>{artImgs=[];$("artTitle").value="";$("artMd").value="";$("artMsg").textContent="";artBookOpts();renderArtImgs();show("artSheet");$("artTitle").focus()});
+$("artNew").addEventListener("click",()=>{artEditId="";artImgs=[];$("artSheetTitle").textContent="مقال جديد";$("artTitle").value="";$("artMd").value="";$("artMsg").textContent="";artBookOpts();renderArtImgs();show("artSheet");$("artTitle").focus()});
 $("artCancel").addEventListener("click",()=>closeAll());
 $("artImg").addEventListener("change",e=>{
   const f=e.target.files&&e.target.files[0];e.target.value="";
@@ -1309,9 +1311,18 @@ $("artSave").addEventListener("click",()=>{
   const title=$("artTitle").value.trim()||md.split("\n")[0].replace(/^#+\s*/,"").slice(0,60)||"مقال من غير عنوان";
   const images={};artImgs.forEach(im=>{images[im.key]=im.data});
   const book=$("artBook").value;
-  kb().articles.push({id:nid(),book,title,md,images,ts:Date.now()});
+  const k=kb();
+  if(artEditId){
+    const a=k.articles.find(x=>x.id===artEditId);
+    if(a){a.title=title;a.md=md;a.images=images;a.book=book}
+  }else{
+    k.articles.push({id:nid(),book,title,md,images,ts:Date.now()});
+  }
   if(book)touch(bk(book));
-  save();closeAll();renderArts();say("اتحفظ المقال ✅");
+  save();closeAll();renderArts();
+  if(!$("artReader").hidden)renderArt();
+  say(artEditId?"اتعدّل المقال ✅":"اتحفظ المقال ✅");
+  artEditId="";
 });
 let artQ=[],artSeen=new Set(),artIdx=0;
 function openArt(id){artQ=[id];artSeen=new Set([id]);artIdx=0;$("artReader").hidden=false;renderArt()}
@@ -1336,6 +1347,27 @@ function artPrev(){if(artIdx>0){artIdx--;renderArt()}else say("ده أول مق�
 $("artNext").addEventListener("click",artNext);
 $("artPrev").addEventListener("click",artPrev);
 $("artClose").addEventListener("click",closeArt);
+$("artEdit").addEventListener("click",()=>{
+  const a=kb().articles.find(x=>x.id===artQ[artIdx]);
+  if(!a)return;
+  artEditId=a.id;
+  $("artSheetTitle").textContent="تعديل المقال";
+  $("artTitle").value=a.title||"";
+  $("artMd").value=a.md||"";
+  $("artMsg").textContent="";
+  artBookOpts();
+  $("artBook").value=a.book||"";
+  artImgs=Object.entries(a.images||{}).map(([key,data])=>({key,data}));
+  renderArtImgs();
+  show("artSheet");$("artTitle").focus();
+});
+$("artDel").addEventListener("click",()=>{
+  const id=artQ[artIdx],a=kb().articles.find(x=>x.id===id);
+  if(!a)return;
+  if(!confirm("مسح المقال «"+a.title+"» نهائيًا؟ مفيش تراجع."))return;
+  const k=kb();k.articles=k.articles.filter(x=>x.id!==id);
+  save();closeArt();renderArts();say("اتمسح المقال");
+});
 $("artReader").addEventListener("keydown",e=>{if(e.key==="Escape")closeArt();else if(e.key==="ArrowLeft")artNext();else if(e.key==="ArrowRight")artPrev()});
 let artTX=0,artTY=0;
 $("artReader").addEventListener("touchstart",e=>{artTX=e.changedTouches[0].clientX;artTY=e.changedTouches[0].clientY},{passive:true});
@@ -1958,7 +1990,7 @@ function tkSection(b){
   const tks=b.takeaways||[];
   return '<section class="v5-group"><div class="v5-grouphead"><h3>استفدت إيه <small>'+nAr(tks.length)+'</small></h3><button type="button" class="v5-link" data-tk="add">+ إضافة</button></div>'
   +'<div id="tkForm" hidden><input class="kin" id="tkTitle" placeholder="عنوان القسم (مثلاً: أول خطوات الإعداد)" maxlength="80">'+rtbHtml("tkEd")+'<div class="kt rte" id="tkEd" contenteditable="true" data-placeholder="اكتب النقاط هنا..." style="min-height:120px;margin-top:6px"></div><div class="r2" style="margin-top:8px"><button class="btn pri" type="button" data-tk="save">احفظ</button><button class="btn" type="button" data-tk="cancel">إلغاء</button></div><p class="msg" id="tkMsg" role="status"></p></div>'
-  +(tks.length?tks.slice().reverse().map(t=>'<details class="v5-note"><summary>'+esc(t.title||"بدون عنوان")+'</summary><div class="rtxt">'+t.body+'</div><small>'+new Intl.DateTimeFormat('ar-EG',{dateStyle:'medium'}).format(new Date(t.ts))+'</small></details>').join(""):'<p class="ks">ملخصك الكامل من الكتاب بأقسامه، وكل قسم بعنوان يتفتح ويتقفل.</p>')
+  +(tks.length?tks.slice().reverse().map(t=>'<details class="v5-note"><summary>'+esc(t.title||"بدون عنوان")+'</summary><div class="rtxt">'+t.body+'</div><small>'+new Intl.DateTimeFormat('ar-EG',{dateStyle:'medium'}).format(new Date(t.ts))+'</small><div class="r2" style="margin-top:6px"><button type="button" class="v5-link" data-tk="edit" data-id="'+t.id+'">تعديل</button><button type="button" class="v5-link" data-tk="del" data-id="'+t.id+'">مسح</button></div></details>').join(""): '<p class="ks">ملخصك الكامل من الكتاب بأقسامه، وكل قسم بعنوان يتفتح ويتقفل.</p>')
   +'</section>';
 }
 let notebookId='';
@@ -1981,12 +2013,18 @@ function openNotebook(id){
 $('captureBookNew').addEventListener('click',()=>openBookSheet(false,'kbs'));
 $('captureOther').addEventListener('change',e=>{if(e.target.value){capType=e.target.value;renderAdd()}});
 $('bookNotebookClose').addEventListener('click',()=>{closeAll();openLib()});
+let tkEditId='';
 $('bnBody').addEventListener('click',e=>{
   const tk=e.target.closest('[data-tk]');if(tk){const act=tk.dataset.tk;
-    if(act==='add'){$('tkForm').hidden=false;$('tkTitle').focus()}
-    else if(act==='cancel'){$('tkForm').hidden=true}
+    if(act==='add'){tkEditId='';$('tkTitle').value='';$('tkEd').innerHTML='';$('tkMsg').textContent='';$('tkForm').hidden=false;$('tkTitle').focus()}
+    else if(act==='cancel'){tkEditId='';$('tkForm').hidden=true}
+    else if(act==='edit'){const t=bk(notebookId).takeaways.find(x=>x.id===tk.dataset.id);if(!t)return;tkEditId=t.id;$('tkTitle').value=t.title||'';$('tkEd').innerHTML=t.body||'';$('tkMsg').textContent='';$('tkForm').hidden=false;$('tkTitle').focus()}
+    else if(act==='del'){const bb=bk(notebookId),t=bb.takeaways.find(x=>x.id===tk.dataset.id);if(!t)return;if(!confirm('مسح قسم «'+(t.title||'بدون عنوان')+'» نهائيًا؟ مفيش تراجع.'))return;bb.takeaways=bb.takeaways.filter(x=>x.id!==t.id);touch(bb);save();openNotebook(notebookId)}
     else if(act==='save'){const body=cleanHtml($('tkEd').innerHTML);if(!htmlToText(body)){$('tkMsg').textContent='اكتب حاجة الأول.';return}
-      const bb=bk(notebookId);bb.takeaways.push({id:nid(),title:$('tkTitle').value.trim(),body,ts:Date.now()});touch(bb);save();openNotebook(notebookId)}
+      const bb=bk(notebookId);
+      if(tkEditId){const t=bb.takeaways.find(x=>x.id===tkEditId);if(t){t.title=$('tkTitle').value.trim();t.body=body}}
+      else bb.takeaways.push({id:nid(),title:$('tkTitle').value.trim(),body,ts:Date.now()});
+      tkEditId='';touch(bb);save();openNotebook(notebookId)}
     return}
   const add=e.target.closest('[data-capture]');if(add)return openCapture(notebookId,add.dataset.capture);
   const answer=e.target.closest('[data-answer]');if(answer){const c=cards().find(c=>c.id===answer.dataset.answer);if(c)openAnswer(c,true)}
