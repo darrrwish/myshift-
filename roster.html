@@ -23,6 +23,7 @@ section{margin-top:14px}
 .card{background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:14px 16px}
 .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .ch h2{margin:0;font-size:17px}
+.nav{width:32px;height:32px;border:0;border-radius:50%;background:var(--bg);color:var(--mu);font-size:18px;cursor:pointer}
 .wk,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .wk span{text-align:center;font-size:11px;color:var(--mu);padding-bottom:6px}
 .cell{min-height:56px;border:0;border-radius:8px;background:var(--bg);padding:4px 2px;display:flex;flex-direction:column;gap:2px;text-align:center}
@@ -77,53 +78,52 @@ function keyOf(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"
 function today(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())}
 document.documentElement.dataset.theme=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
 var cv=localStorage.getItem("almihwar-roster-cv")==="a"?"a":"g";
+var places=[],shifts={},viewM=null;
 function deny(){document.title=" ";document.body.innerHTML="";}
 function build(DATA){
-  var t=today();
-  var places=DATA.places||[],shifts=DATA.shifts||{};
+  places=DATA.places||[];shifts=DATA.shifts||{};
   var stamp=DATA.at||DATA.updatedAt;
-  var months={};
-  Object.keys(shifts).forEach(function(pid){Object.keys(shifts[pid]||{}).forEach(function(k){months[k.slice(0,7)]=1})});
-  var mkeys=Object.keys(months).sort();
-  if(!places.length||!mkeys.length){deny();return}
-  var h='<header class="top"><h1>روستر الشيفتات</h1><p>تحديث: '+fDT.format(new Date(stamp))+' · للعرض فقط</p></header>'
-    +'<div class="vsw" id="vsw" role="group" aria-label="طريقة العرض"><button type="button" data-cv="a">عمودي</button><button type="button" data-cv="g">تقليدي</button></div>';
-  mkeys.forEach(function(mk){
-    var y=+mk.slice(0,4),m=+mk.slice(5,7)-1;
-    h+='<section class="card"><div class="ch"><h2>'+fM.format(new Date(y,m,1))+'</h2></div>'
-      +'<div class="wk wk2" data-wk="'+mk+'"></div><div class="days" data-days="'+mk+'"></div></section>';
-  });
-  h+='<div class="lg" id="lg"></div>';
+  var has=false;Object.keys(shifts).forEach(function(pid){if(Object.keys(shifts[pid]||{}).length)has=true});
+  if(!places.length||!has){deny();return}
+  var t0=today();viewM=new Date(t0.getFullYear(),t0.getMonth(),1);
+  var h='<header class="top"><h1>روستر الشيفتات</h1><p>تحديث: '+fDT.format(new Date(stamp))+'</p></header>'
+    +'<div class="vsw" id="vsw" role="group" aria-label="طريقة العرض"><button type="button" data-cv="a">عمودي</button><button type="button" data-cv="g">تقليدي</button></div>'
+    +'<section class="card"><div class="ch"><button class="nav" id="prev" type="button" aria-label="الشهر اللي قبله">›</button><h2 id="mt"></h2><button class="nav" id="nxt" type="button" aria-label="الشهر الجاي">‹</button></div>'
+    +'<div class="wk wk2" id="wk"></div><div class="days" id="days"></div></section>'
+    +'<div class="lg" id="lg"></div>';
   $("app").innerHTML=h;
   $("vsw").addEventListener("click",function(e){var b=e.target.closest("button[data-cv]");if(!b)return;cv=b.dataset.cv;localStorage.setItem("almihwar-roster-cv",cv);render()});
+  $("prev").addEventListener("click",function(){viewM=new Date(viewM.getFullYear(),viewM.getMonth()-1,1);render()});
+  $("nxt").addEventListener("click",function(){viewM=new Date(viewM.getFullYear(),viewM.getMonth()+1,1);render()});
   render();
-  function render(){
-    var btns=document.querySelectorAll("#vsw button");
-    for(var bi=0;bi<btns.length;bi++)btns[bi].classList.toggle("sel",btns[bi].dataset.cv===cv);
-    mkeys.forEach(function(mk){
-      var y=+mk.slice(0,4),m=+mk.slice(5,7)-1;
-      var daysEl=document.querySelector('[data-days="'+mk+'"]'),wkEl=document.querySelector('[data-wk="'+mk+'"]');
-      daysEl.classList.toggle("grid",cv==="g");wkEl.classList.toggle("on",cv==="g");
-      var h="",d,n,dt,k,tdy;
-      if(cv==="g"){
-        if(!wkEl.children.length)wkEl.innerHTML=[0,1,2,3,4,5,6].map(function(i){return "<span>"+fWn.format(new Date(2024,0,7+i))+"</span>"}).join("");
-        for(var i=0;i<new Date(y,m,1).getDay();i++)h+='<div class="cell bl" aria-hidden="true"></div>';
-        for(d=1,n=new Date(y,m+1,0).getDate();d<=n;d++){
-          dt=new Date(y,m,d);k=keyOf(dt);tdy=dt.getTime()===t.getTime();
-          var pills=places.map(function(p){var v=(shifts[p.id]||{})[k];return v?'<i class="pill" style="--c:'+p.color+'">'+v+"</i>":""}).join("");
-          h+='<div class="cell'+(tdy?" td":"")+(dt<t?" ps":"")+'"><span class="n">'+d+"</span>"+pills+"</div>";
-        }
-        daysEl.innerHTML=h;return;
-      }
-      for(d=1,n=new Date(y,m+1,0).getDate();d<=n;d++){
-        dt=new Date(y,m,d);k=keyOf(dt);tdy=dt.getTime()===t.getTime();
-        var its=places.map(function(p){var v=(shifts[p.id]||{})[k];return v?'<span class="it" style="--c:'+p.color+'"><small>'+(SH[v]||v)+"</small><i></i><b>"+esc(p.name)+"</b></span>":""}).join("");
-        h+='<div class="dr'+(tdy?" td":"")+(dt<t?" ps":"")+(its?"":" e")+'"><span class="dn"><small>'+fS.format(dt)+"</small><b>"+d+'</b></span><span class="ev">'+its+"</span></div>";
-      }
-      daysEl.innerHTML=h;
-    });
-    $("lg").innerHTML=places.map(function(p){return '<span style="--c:'+p.color+'"><i></i>'+esc(p.name)+"</span>"}).join("")+CODES.map(function(c){return "<span>"+c+" = "+SH[c]+"</span>"}).join("");
+}
+function render(){
+  var t=today(),y=viewM.getFullYear(),m=viewM.getMonth();
+  var btns=document.querySelectorAll("#vsw button");
+  for(var bi=0;bi<btns.length;bi++)btns[bi].classList.toggle("sel",btns[bi].dataset.cv===cv);
+  $("mt").textContent=fM.format(viewM);
+  var daysEl=$("days"),wkEl=$("wk");
+  daysEl.classList.toggle("grid",cv==="g");wkEl.classList.toggle("on",cv==="g");
+  var h="",d,n,dt,k,tdy;
+  if(cv==="g"){
+    wkEl.innerHTML=[0,1,2,3,4,5,6].map(function(i){return "<span>"+fWn.format(new Date(2024,0,7+i))+"</span>"}).join("");
+    for(var i=0;i<new Date(y,m,1).getDay();i++)h+='<div class="cell bl" aria-hidden="true"></div>';
+    for(d=1,n=new Date(y,m+1,0).getDate();d<=n;d++){
+      dt=new Date(y,m,d);k=keyOf(dt);tdy=dt.getTime()===t.getTime();
+      var pills=places.map(function(p){var v=(shifts[p.id]||{})[k];return v?'<i class="pill" style="--c:'+p.color+'">'+v+"</i>":""}).join("");
+      h+='<div class="cell'+(tdy?" td":"")+(dt<t?" ps":"")+'"><span class="n">'+d+"</span>"+pills+"</div>";
+    }
+    daysEl.innerHTML=h;
+  }else{
+    wkEl.innerHTML="";
+    for(d=1,n=new Date(y,m+1,0).getDate();d<=n;d++){
+      dt=new Date(y,m,d);k=keyOf(dt);tdy=dt.getTime()===t.getTime();
+      var its=places.map(function(p){var v=(shifts[p.id]||{})[k];return v?'<span class="it" style="--c:'+p.color+'"><small>'+(SH[v]||v)+"</small><i></i><b>"+esc(p.name)+"</b></span>":""}).join("");
+      h+='<div class="dr'+(tdy?" td":"")+(dt<t?" ps":"")+(its?"":" e")+'"><span class="dn"><small>'+fS.format(dt)+"</small><b>"+d+'</b></span><span class="ev">'+its+"</span></div>";
+    }
+    daysEl.innerHTML=h;
   }
+  $("lg").innerHTML=places.map(function(p){return '<span style="--c:'+p.color+'"><i></i>'+esc(p.name)+"</span>"}).join("")+CODES.map(function(c){return "<span>"+c+" = "+SH[c]+"</span>"}).join("");
 }
 fetch("roster.json?ts="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){
   if(!j||!(j.at||j.updatedAt)||!j.places||!j.shifts){deny();return}
