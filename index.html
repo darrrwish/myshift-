@@ -639,7 +639,7 @@ body.reels{overflow:hidden}
   <section id="tot"></section>
   <section class="card" id="agenda">
     <div class="ch"><button class="nav" id="prev" type="button" aria-label="الشهر اللي قبله">›</button><h2 id="mt"></h2><button class="nav" id="nxt" type="button" aria-label="الشهر الجاي">‹</button></div>
-    <div class="vsw" id="vsw" role="group" aria-label="طريقة العرض"><button type="button" data-cv="a">أيام تحت بعض</button><button type="button" data-cv="g">تقويم الشهر</button></div>
+    <div class="vsw" id="vsw" role="group" aria-label="طريقة العرض"><button type="button" data-cv="a">عمودي</button><button type="button" data-cv="g">تقليدي</button></div>
     <div class="wk" id="wk"></div><div class="days" id="days"></div>
     <div class="lg" id="lg"></div>
   </section>
@@ -849,7 +849,7 @@ body.reels{overflow:hidden}
 (function(){
 const KEY="shefati-v2",OLD="shefati-empty-v1";
 const PAL=["#E4572E","#17BEBB","#FFB000","#5BB450","#8E5CF7","#E8478B","#2F80ED","#F2711C","#00A98F","#7A869A"];
-const SH={D:"نهار",N:"سهر",DN:"نبطشية",M:"M"},CODES=Object.keys(SH);
+const SH={D:"نهار",N:"سهر",DN:"24h",M:"مسائي"},CODES=Object.keys(SH);
 const SYSL={cal:"شهر عادي (١ لآخر الشهر)",mid:"من ١٦ لـ ١٥ الشهر الجاي"},SYSS={cal:"شهر عادي",mid:"١٦ ← ١٥"};
 const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const VERSES=[["فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا","الشرح ٥–٦"],["وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ","الطلاق ٣"],["أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ","الرعد ٢٨"],["وَقُل رَّبِّ زِدْنِي عِلْمًا","طه ١١٤"],["لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا","البقرة ٢٨٦"],["فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ","البقرة ١٥٢"],["وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ","الضحى ٥"],["إِنَّ اللَّهَ مَعَ الصَّابِرِينَ","البقرة ١٥٣"],["وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا","الطلاق ٢"],["رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ","البقرة ٢٠١"],["وَاصْبِرْ وَمَا صَبْرُكَ إِلَّا بِاللَّهِ","النحل ١٢٧"],["وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ","هود ٨٨"],["وَقَالَ رَبُّكُمُ ادْعُونِي أَسْتَجِبْ لَكُمْ","غافر ٦٠"],["سَيَجْعَلُ اللَّهُ بَعْدَ عُسْرٍ يُسْرًا","الطلاق ٧"],["وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ","البقرة ٢١٦"],["وَلَا تَهِنُوا وَلَا تَحْزَنُوا وَأَنتُمُ الْأَعْلَوْنَ إِن كُنتُم مُّؤْمِنِينَ","آل عمران ١٣٩"],["وَمَنْ أَحْيَاهَا فَكَأَنَّمَا أَحْيَا النَّاسَ جَمِيعًا","المائدة ٣٢"],["وَإِذَا مَرِضْتُ فَهُوَ يَشْفِينِ","الشعراء ٨٠"],["وَاللَّهُ يَرْزُقُ مَن يَشَاءُ بِغَيْرِ حِسَابٍ","البقرة ٢١٢"],["فَاصْبِرْ صَبْرًا جَمِيلًا","المعارج ٥"],["وَرَحْمَتِي وَسِعَتْ كُلَّ شَيْءٍ","الأعراف ١٥٦"],["وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ","الحديد ٤"],["إِنَّ رَحْمَتَ اللَّهِ قَرِيبٌ مِّنَ الْمُحْسِنِينَ","الأعراف ٥٦"],["وَاللَّهُ غَالِبٌ عَلَىٰ أَمْرِهِ","يوسف ٢١"]];
@@ -950,7 +950,7 @@ const curStart=(sys,t)=>sys==="mid"&&t.getDate()<16?[t.getFullYear(),t.getMonth(
 function count(id,r){
   const a=keyOf(r[0]),b=keyOf(r[1]),c={D:0,N:0,DN:0,M:0},s=state.shifts[id]||{};
   for(const k in s)if(k>=a&&k<=b&&c[s[k]]!==undefined)c[s[k]]++;
-  c.total=c.D+c.N+2*c.DN;return c;
+  c.total=c.D+c.N+2*c.DN+c.M;return c;
 }
 
 /* Theme */
@@ -1058,8 +1058,8 @@ async function exportX(){
     ws.addConditionalFormatting({ref:rng,rules:CODES.map(k=>({type:"cellIs",operator:"equal",formulae:['"'+k+'"'],style:{fill:{type:"pattern",pattern:"solid",bgColor:{argb:CF[k]}}}}))});
     ws.getCell(SR,c0).value="الإجمالي";ws.getCell(SR,c0).font={name:"Arial",bold:true};
     CODES.forEach((k,j)=>{ws.getCell(SR+1+j,c0).value=k;ws.getCell(SR+1+j,c0+2).value={formula:"COUNTIF("+rng+',"'+k+'")',result:cnt[k]}});
-    ws.getCell(SR+5,c0).value="Total (DN=2)";
-    ws.getCell(SR+5,c0+2).value={formula:L(2)+(SR+1)+"+"+L(2)+(SR+2)+"+2*"+L(2)+(SR+3),result:cnt.D+cnt.N+2*cnt.DN};
+    ws.getCell(SR+5,c0).value="Total (DN=2, M=1)";
+    ws.getCell(SR+5,c0+2).value={formula:L(2)+(SR+1)+"+"+L(2)+(SR+2)+"+2*"+L(2)+(SR+3)+"+"+L(2)+(SR+4),result:cnt.D+cnt.N+2*cnt.DN+cnt.M};
     for(let rw=SR+1;rw<=SR+5;rw++)for(let k=0;k<3;k++){const c=ws.getCell(rw,c0+k);c.border=bd;c.alignment=ct;c.font={name:"Arial",bold:k===0}}
     [12,8,16,3].forEach((w,k)=>ws.getColumn(c0+k).width=w);
   });
@@ -1079,7 +1079,7 @@ function cellDate(c){
 }
 function normShift(s){
   const t=s.replace(/[\s+\/\-]/g,"").toUpperCase();
-  return{D:"D",N:"N",DN:"DN",ND:"DN",M:"M","نهار":"D","سهر":"N","ليل":"N","نبطشية":"DN"}[t]||"";
+  return{D:"D",N:"N",DN:"DN",ND:"DN",M:"M","نهار":"D","سهر":"N","ليل":"N","نبطشية":"DN","مسائي":"M"}[t]||"";
 }
 async function importX(f){
   if(!window.ExcelJS)return say("مكتبة Excel ما اتحملتش. اتأكد من النت وجرب تاني.");
