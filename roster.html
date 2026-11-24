@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الروستر — المحور</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EAEFF6;--sf:#FBFBFC;--ink:#14161A;--mu:#818997;--ln:#E3E8F0;--ac:#1E8FE0;--tdy:#E3F1FC;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#0E1117;--sf:#171B23;--ink:#EEF1F6;--mu:#8B93A1;--ln:#262B35;--ac:#5CB4F5;--tdy:#18283A;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:520px;margin:0 auto;padding:16px 14px 40px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+.hd h1{font-size:20px;margin:0;font-weight:700}
+.badge{flex:none;font-size:12px;color:var(--mu);border:1px solid var(--ln);border-radius:999px;padding:3px 10px;background:var(--sf)}
+.sub{color:var(--mu);font-size:12.5px;margin:0 0 14px}
+.nav{display:flex;align-items:center;justify-content:space-between;margin:10px 0}
+.nav button{border:1px solid var(--ln);background:var(--sf);color:var(--ink);border-radius:12px;padding:8px 16px;font-family:inherit;font-size:14px;cursor:pointer}
+.nav button:active{transform:scale(.97)}
+#mt{font-weight:700;font-size:16px}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.wk span{text-align:center;font-size:11px;color:var(--mu);padding:2px 0}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cell{position:relative;min-height:52px;border:1px solid var(--ln);border-radius:12px;background:var(--sf);padding:5px 4px 4px;display:flex;flex-direction:column;gap:3px}
+.cell.bl{border:none;background:transparent}
+.cell.td{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset;background:var(--tdy)}
+.cell .n{font-size:12px;font-weight:600;color:var(--mu)}
+.cell.td .n{color:var(--ac)}
+.pill{display:block;text-align:center;font-size:10.5px;font-weight:700;font-style:normal;color:#fff;background:var(--c,#888);border-radius:6px;padding:1px 2px;line-height:1.4}
+.lg{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;font-size:12px;color:var(--mu)}
+.lg span{display:inline-flex;align-items:center;gap:5px}
+.lg i{width:10px;height:10px;border-radius:3px;background:var(--c,#888);display:inline-block}
+.msg{margin-top:18px;text-align:center;color:var(--mu);font-size:13px;white-space:pre-line}
+.foot{margin-top:26px;text-align:center;color:var(--mu);font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd"><h1>الروستر</h1><span class="badge">للعرض فقط</span></div>
+  <p class="sub" id="upd">بيتحدث تلقائي كل ما الروستر يتعدل.</p>
+  <div class="nav">
+    <button type="button" id="nxt" aria-label="الشهر الجاي">‹ الجاي</button>
+    <div id="mt"></div>
+    <button type="button" id="prv" aria-label="الشهر اللي فات">اللي فات ›</button>
+  </div>
+  <div class="wk" id="wk"></div>
+  <div class="grid" id="days"></div>
+  <div class="lg" id="lg"></div>
+  <p class="msg" id="msg"></p>
+  <div class="foot">أي صفحة تانية من التطبيق: غير مصرح بيها.</div>
+</div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const SH={D:"نهار",N:"سهر",DN:"نبطشية",M:"M"},CODES=Object.keys(SH);
+const pad=n=>String(n).padStart(2,"0");
+const keyOf=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const fM=new Intl.DateTimeFormat("ar-EG",{month:"long",year:"numeric"});
+const fWn=new Intl.DateTimeFormat("ar-EG",{weekday:"narrow"});
+const today=()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())};
+let data=null,viewMonth=null;
+function deny(t){$("msg").textContent=t;$("days").innerHTML="";$("wk").innerHTML="";$("lg").innerHTML="";$("mt").textContent="";}
+function render(){
+  if(!data)return;
+  const y=viewMonth.getFullYear(),m=viewMonth.getMonth(),t=today();
+  $("mt").textContent=fM.format(viewMonth);
+  $("wk").innerHTML=[0,1,2,3,4,5,6].map(i=>"<span>"+fWn.format(new Date(2024,0,7+i))+"</span>").join("");
+  let h="";
+  for(let i=0;i<new Date(y,m,1).getDay();i++)h+='<div class="cell bl" aria-hidden="true"></div>';
+  for(let d=1,n=new Date(y,m+1,0).getDate();d<=n;d++){
+    const dt=new Date(y,m,d),k=keyOf(dt),tdy=dt.getTime()===t.getTime();
+    const pills=data.places.map(p=>{const v=(data.shifts[p.id]||{})[k];return v?'<i class="pill" style="--c:'+esc(p.color)+'">'+esc(v)+"</i>":""}).join("");
+    h+='<div class="cell'+(tdy?" td":"")+'"><span class="n">'+d+"</span>"+pills+"</div>";
+  }
+  $("days").innerHTML=h;
+  $("lg").innerHTML=data.places.map(p=>'<span style="--c:'+esc(p.color)+'"><i></i>'+esc(p.name)+"</span>").join("")+CODES.map(c=>"<span>"+c+" = "+SH[c]+"</span>").join("");
+  if(data.at){try{$("upd").textContent="آخر تحديث: "+new Intl.DateTimeFormat("ar-EG",{dateStyle:"medium",timeStyle:"short"}).format(new Date(data.at));}catch(_){}}
+}
+async function load(silent){
+  try{
+    const r=await fetch("./roster.json?"+Date.now(),{cache:"no-store"});
+    if(!r.ok){deny("غير مصرح.\nاللينك ده مش متاح دلوقتي.");return}
+    const j=await r.json();
+    if(!j||j.app!=="almihwar-roster"||!Array.isArray(j.places)||!j.shifts||typeof j.shifts!=="object"){deny("غير مصرح.\nاللينك ده مش متاح دلوقتي.");return}
+    j.places=j.places.filter(p=>p&&typeof p.name==="string"&&p.id).map(p=>({id:String(p.id),name:p.name.slice(0,30),color:/^#[0-9a-f]{6}$/i.test(p.color)?p.color:"#1E8FE0"}));
+    const sh={};j.places.forEach(p=>{const src=j.shifts[p.id]||{},o={};Object.keys(src).forEach(k=>{if(/^\d{4}-\d\d-\d\d$/.test(k)&&typeof src[k]==="string"&&src[k].length<=3)o[k]=src[k]});sh[p.id]=o});
+    j.shifts=sh;
+    const first=!data;data=j;
+    if(first){const t=today();viewMonth=new Date(t.getFullYear(),t.getMonth(),1)}
+    render();
+  }catch(_){if(!silent)deny("تعذّر التحميل. اتأكد من النت وجرب تاني.");}
+}
+$("prv").addEventListener("click",()=>{if(!viewMonth)return;viewMonth=new Date(viewMonth.getFullYear(),viewMonth.getMonth()-1,1);render()});
+$("nxt").addEventListener("click",()=>{if(!viewMonth)return;viewMonth=new Date(viewMonth.getFullYear(),viewMonth.getMonth()+1,1);render()});
+load(false);
+setInterval(()=>load(true),60000);
+</script>
+</body>
+</html>
