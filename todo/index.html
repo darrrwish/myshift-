@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>مهامي — خط زمني</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+:root{--bg:#fff;--sf:#f5f5f5;--ink:#111;--mu:#777;--ln:#e4e4e4}
+body.dark{--bg:#0f0f10;--sf:#1a1a1c;--ink:#f2f2f2;--mu:#999;--ln:#2c2c2e}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Tahoma,Arial,sans-serif;display:flex;flex-direction:column;max-width:560px;margin:0 auto}
+header{padding:14px 18px 8px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:20px;margin:0}
+header .hd-sub{font-size:12px;color:var(--mu);margin-top:2px}
+#darkBtn{border:1px solid var(--ln);background:var(--sf);color:var(--ink);width:36px;height:36px;border-radius:50%;font-size:15px;cursor:pointer}
+#tl{flex:1;overflow-y:auto;padding:6px 0 20px}
+.month-lab{font-size:11px;color:var(--mu);padding:14px 18px 2px;letter-spacing:.5px}
+.day{display:flex;gap:10px;padding:8px 14px 8px 18px}
+.day-lab{flex:none;width:52px;text-align:center;padding-top:2px}
+.day-lab .dw{display:block;font-size:10px;color:var(--mu);letter-spacing:.5px}
+.day-lab .dn{display:block;font-size:20px;font-weight:700;line-height:1.15}
+.day-lab .today-pill{display:inline-block;background:var(--ink);color:var(--bg);font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:99px;margin-top:3px}
+.day-line{flex:none;width:14px;position:relative}
+.day-line::before{content:"";position:absolute;top:8px;bottom:-8px;right:6.5px;border-right:2px dotted var(--ln)}
+.day:last-child .day-line::before{bottom:auto;height:60%}
+.day-items{flex:1;min-width:0;padding-bottom:6px}
+.titem{display:flex;align-items:baseline;gap:8px;padding:7px 4px;border-bottom:1px solid var(--ln);cursor:pointer;position:relative}
+.titem:last-child{border-bottom:0}
+.tdot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--ink);align-self:center}
+.titem.done .tdot{background:transparent;border:2px solid var(--mu);width:7px;height:7px}
+.ttime{flex:none;font-size:11px;color:var(--mu);min-width:56px}
+.ttext{flex:1;font-size:14.5px;line-height:1.7;overflow-wrap:anywhere}
+.titem.done .ttext{text-decoration:line-through;color:var(--mu)}
+.tacts{flex:none;display:flex;gap:0}
+.tacts button{border:0;background:none;color:var(--mu);font-size:13px;cursor:pointer;padding:2px 4px;border-radius:6px}
+.more{border:0;background:none;color:var(--mu);font-size:12px;cursor:pointer;padding:6px 4px;font-family:inherit}
+.empty{text-align:center;color:var(--mu);padding:50px 20px;font-size:13.5px;line-height:2}
+#composer{display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--ln);background:var(--bg)}
+#tin{flex:1;border:1px solid var(--ln);background:var(--sf);color:var(--ink);border-radius:99px;padding:11px 16px;font-size:14.5px;font-family:inherit;outline:none}
+#tin:focus{border-color:var(--ink)}
+#sendBtn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sheet{position:fixed;inset-inline:0;bottom:0;z-index:11;max-width:560px;margin:0 auto;background:var(--sf);border-radius:22px 22px 0 0;padding:12px 18px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.sheet h2{font-size:16px;margin:4px 0 8px}
+.sheet .flabel{display:block;font-size:12px;color:var(--mu);margin:10px 0 5px}
+.sheet input,.sheet textarea{width:100%;border:1px solid var(--ln);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none}
+.sheet .r2{display:flex;gap:8px;margin-top:14px}
+.sheet .btn{flex:1;padding:12px;border-radius:14px;border:1px solid var(--ln);background:var(--bg);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.sheet .btn.pri{background:var(--ink);color:var(--bg);border:0}
+#scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:10}
+#toast{position:fixed;bottom:80px;inset-inline:0;text-align:center;z-index:20;pointer-events:none}
+#toast span{background:var(--ink);color:var(--bg);font-size:13px;padding:8px 18px;border-radius:99px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>مهامي</h1><div class="hd-sub" id="hdDate"></div></div>
+  <button id="darkBtn" type="button" aria-label="الوضع الليلي">☾</button>
+</header>
+<div id="tl"></div>
+<form id="composer" autocomplete="off">
+  <input id="tin" type="text" placeholder="اكتب مهمة وابعتها..." aria-label="مهمة جديدة">
+  <button id="sendBtn" type="submit" aria-label="إرسال">↑</button>
+</form>
+<div class="sheet" id="editSheet" role="dialog" aria-modal="true" hidden>
+  <h2>عدّل المهمة</h2>
+  <span class="flabel">المهمة</span>
+  <textarea id="eText" rows="3"></textarea>
+  <span class="flabel">اليوم</span>
+  <input id="eDate" type="date">
+  <span class="flabel">الوقت</span>
+  <input id="eTime" type="time">
+  <div class="r2"><button class="btn" id="eCancel" type="button">إلغاء</button><button class="btn pri" id="eSave" type="button">احفظ</button></div>
+</div>
+<div id="scrim" hidden></div>
+<div id="toast" hidden><span></span></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const keyOf=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parseKey=s=>{const p=s.split("-").map(Number);return new Date(p[0],p[1]-1,p[2])};
+const today=()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())};
+const nid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const fD=new Intl.DateTimeFormat("ar-EG",{weekday:"long",day:"numeric",month:"long"});
+const fMY=new Intl.DateTimeFormat("ar-EG",{month:"long",year:"numeric"});
+const fW=new Intl.DateTimeFormat("ar-EG",{weekday:"narrow"});
+const fT=new Intl.DateTimeFormat("ar-EG",{hour:"numeric",minute:"2-digit"});
+const ARN="٠١٢٣٤٥٦٧٨٩";
+const arDig=s=>String(s).replace(/[٠-٩]/g,c=>String(ARN.indexOf(c)));
+
+const KEY="todoline-v1";
+let state;
+try{state=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){state={}}
+state.items=state.items||[];
+if(state.dark==null)state.dark=matchMedia("(prefers-color-scheme: dark)").matches;
+const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
+if(state.dark)document.body.classList.add("dark");
+
+/* parse "بكرة"/"بعد بكرة" and a time like "5:30 م" or "الساعة ٧ ص" out of the text */
+function parseMsg(raw){
+  let text=raw.trim(),day=keyOf(today()),time=null;
+  let m=text.match(/بعد\s*بكرة/);if(m){const d=today();d.setDate(d.getDate()+2);day=keyOf(d);text=text.replace(m[0]," ")}
+  else{m=text.match(/بكرة|بكره/);if(m){const d=today();d.setDate(d.getDate()+1);day=keyOf(d);text=text.replace(m[0]," ")}}
+  m=text.match(/الساعة\s*([0-9٠-٩]{1,2})(?:[:٫.]([0-9٠-٩]{1,2}))?\s*(صباحا|ص|مساء|م)?/);
+  if(!m)m=text.match(/(?:^|\s)([0-9٠-٩]{1,2})[:٫.]([0-9٠-٩]{1,2})\s*(صباحا|ص|مساء|م)?(?:\s|$)/);
+  if(m){
+    let h=+arDig(m[1]),min=m[2]?+arDig(m[2]):0;const ap=m[3]||"";
+    if((ap==="م"||ap==="مساء")&&h<12)h+=12;
+    if((ap==="ص"||ap==="صباحا")&&h===12)h=0;
+    if(h>=0&&h<24&&min>=0&&min<60){time=pad(h)+":"+pad(min);text=text.replace(m[0]," ")}
+  }
+  text=text.replace(/\s+/g," ").trim();
+  return{text,day,time};
+}
+const nowTime=()=>{const n=new Date();return pad(n.getHours())+":"+pad(n.getMinutes())};
+
+let expanded={};
+function daysWithItems(){
+  const map={};
+  state.items.forEach(i=>{(map[i.day]=map[i.day]||[]).push(i)});
+  const tk=keyOf(today());
+  if(!map[tk])map[tk]=[];
+  return Object.keys(map).sort().map(k=>({day:k,items:map[k].sort((a,b)=>(a.time||"")<(b.time||"")?-1:1)}));
+}
+function render(){
+  $("hdDate").textContent=fD.format(today());
+  const days=daysWithItems(),tk=keyOf(today());
+  let html="",lastMonth="";
+  days.forEach(g=>{
+    const d=parseKey(g.day),my=fMY.format(d);
+    if(my!==lastMonth){html+='<div class="month-lab">'+esc(my)+"</div>";lastMonth=my}
+    const isT=g.day===tk;
+    html+='<div class="day" id="day-'+g.day+'"><div class="day-lab"><span class="dw">'+esc(fW.format(d))+'</span><span class="dn">'+new Intl.NumberFormat("ar-EG").format(d.getDate())+"</span>"+(isT?'<span class="today-pill">اليوم</span>':"")+"</div>"
+      +'<div class="day-line"></div><div class="day-items">';
+    const lim=expanded[g.day]?g.items.length:5;
+    g.items.slice(0,lim).forEach(i=>{
+      html+='<div class="titem'+(i.done?" done":"")+'" data-tid="'+i.id+'"><span class="tdot"></span>'
+        +(i.time?'<span class="ttime">'+esc(fmtTime(i.time))+"</span>":"")
+        +'<span class="ttext">'+esc(i.text)+"</span>"
+        +'<span class="tacts"><button type="button" data-te="'+i.id+'" aria-label="تعديل">✎</button><button type="button" data-td="'+i.id+'" aria-label="مسح">🗑</button></span></div>';
+    });
+    if(g.items.length>lim)html+='<button type="button" class="more" data-mx="'+g.day+'">+ '+new Intl.NumberFormat("ar-EG").format(g.items.length-lim)+" أكتر</button>";
+    if(!g.items.length&&isT)html+='<div class="empty" style="padding:14px">مفيش مهام النهارده. اكتب أول واحدة تحت 👇</div>';
+    html+="</div></div>";
+  });
+  $("tl").innerHTML=html||'<div class="empty">مفيش مهام لسه</div>';
+}
+function fmtTime(t){
+  const p=t.split(":"),d=new Date();d.setHours(+p[0],+p[1],0,0);return fT.format(d);
+}
+function scrollToday(){const el=$("day-"+keyOf(today()));if(el)el.scrollIntoView({block:"start"})}
+
+$("composer").addEventListener("submit",e=>{
+  e.preventDefault();
+  const raw=$("tin").value;if(!raw.trim())return;
+  const p=parseMsg(raw);
+  if(!p.text){$("tin").value="";return}
+  state.items.push({id:nid(),text:p.text,day:p.day,time:p.time||nowTime(),ts:Date.now(),done:false});
+  save();$("tin").value="";expanded[p.day]=true;render();
+  const el=$("day-"+p.day);if(el)el.scrollIntoView({block:"center"});
+});
+$("tl").addEventListener("click",e=>{
+  const mx=e.target.closest("[data-mx]");if(mx){expanded[mx.dataset.mx]=true;render();return}
+  const ed=e.target.closest("[data-te]");if(ed){openEdit(ed.dataset.te);return}
+  const dl=e.target.closest("[data-td]");
+  if(dl){
+    const it=state.items.find(x=>x.id===dl.dataset.td);if(!it)return;
+    if(!confirm("تمسح المهمة دي نهائي؟"))return;
+    state.items=state.items.filter(x=>x.id!==it.id);save();render();toast("اتمسحت 🗑");return;
+  }
+  const row=e.target.closest("[data-tid]");
+  if(row){
+    const it=state.items.find(x=>x.id===row.dataset.tid);if(!it)return;
+    it.done=!it.done;save();render();
+  }
+});
+let editId="";
+function openEdit(id){
+  const it=state.items.find(x=>x.id===id);if(!it)return;
+  editId=id;$("eText").value=it.text;$("eDate").value=it.day;$("eTime").value=it.time||"";
+  $("editSheet").hidden=false;$("scrim").hidden=false;
+}
+function closeEdit(){$("editSheet").hidden=true;$("scrim").hidden=true;editId=""}
+$("eCancel").addEventListener("click",closeEdit);
+$("scrim").addEventListener("click",closeEdit);
+$("eSave").addEventListener("click",()=>{
+  const it=state.items.find(x=>x.id===editId);if(!it){closeEdit();return}
+  const t=$("eText").value.trim();if(!t)return;
+  it.text=t;it.day=$("eDate").value||it.day;it.time=$("eTime").value||"";
+  save();closeEdit();render();toast("اتعدّلت ✅");
+});
+let toastT=null;
+function toast(m){$("toast").hidden=false;$("toast").querySelector("span").textContent=m;clearTimeout(toastT);toastT=setTimeout(()=>$("toast").hidden=true,1800)}
+$("darkBtn").addEventListener("click",()=>{state.dark=!state.dark;document.body.classList.toggle("dark",state.dark);save()});
+if(location.protocol.startsWith("http")&&navigator.serviceWorker)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+render();scrollToday();
+</script>
+</body>
+</html>
