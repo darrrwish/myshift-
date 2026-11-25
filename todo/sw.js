@@ -1,5 +1,5 @@
 /* Todo timeline shell cache. Change the version on each release. */
-const CACHE='todoline-shell-v3-20261125';
+const CACHE='todoline-shell-v4-20261125';
 const ROOT=new URL('./',self.location.href).href;
 const SHELL=['./','./index.html','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>{
