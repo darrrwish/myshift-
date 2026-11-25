@@ -105,7 +105,7 @@ section{margin-top:14px}
 .mk-stat b{display:block;font-size:16px}
 .mk-stat span{font-size:10.5px;color:var(--mu)}
 .mk-stat.mol b{color:#34D399}.mk-stat.mor b{color:#5CB4F5}.mk-stat.cast b{color:#F5A85C}.mk-stat.gal b{color:#B48CF5}
-.mk-tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.mk-tabs{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0 8px}
 .mk-tabs::-webkit-scrollbar{display:none}
 .mk-tabs button{flex:none;padding:6px 13px;border-radius:99px;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .mk-tabs button.sel{background:#2DD4BF;border-color:#2DD4BF;color:#05231F}
@@ -142,6 +142,9 @@ section{margin-top:14px}
 .mk-gdot{flex:none;width:10px;height:10px;border-radius:50%;margin-top:6px}
 .mk-grow b{display:block;font-size:13.5px}
 .mk-grow p{font-size:12px;color:var(--mu);line-height:1.8;margin:2px 0 0}
+.mk-acts{margin-inline-start:auto;display:flex;gap:2px}
+.mk-acts button{border:0;background:none;color:var(--mu);font-size:14px;cursor:pointer;padding:2px 5px;border-radius:6px}
+.mk-acts button:active{background:var(--ln)}
 .sheet{position:fixed;inset-inline:0;bottom:0;z-index:11;max-width:520px;margin:0 auto;max-height:88vh;overflow-y:auto;background:var(--sf);border-radius:22px 22px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.25)}
 .grip{width:40px;height:4px;border-radius:4px;background:var(--ln);margin:0 auto 14px}
 .sheet h2{margin:0 0 12px;font-size:18px}
@@ -1461,7 +1464,7 @@ $("artReader").addEventListener("touchend",e=>{
   if(dx<-50)artNext();else if(dx>50)artPrev();
 },{passive:true});
 const MKSRC={mol:"ملخص",mor:"مراجعة",cast:"أخضر كاست",gal:"جلسة أخضر"},MKSTAT={mol:"ملخص",mor:"مراجعات",cast:"كاست",gal:"جلسات"},MKT_SHORT={quote:"اقتباس",app:"فكرة",question:"سؤال",idea:"فكرة",concept:"فكرة",crit:"نقد/تقييم"},MKT_FILT={all:"الكل",idea:"فكرة",quote:"اقتباس",question:"سؤال",crit:"نقد/تقييم"},MKPH={mol:"اكتب الفكرة المركزية أو المحور العملي الذي خرجت به...",mor:"ما نقطة القوة أو المأخذ النقدي على طرح الكتاب؟",cast:"ما الفكرة التي استوقفتك أثناء الاستماع؟",gal:"ما السؤال النقاشي أو الرؤية الجديدة التي ظهرت في الجلسة؟"};
-let mkMode="feed",mkSrc="all",mkType="all",mkBookF="",mkFSrc="mol",mkFType="idea";
+let mkMode="feed",mkSrc="all",mkType="all",mkBookF="",mkFSrc="mol",mkFType="idea",mkEditId="";
 KT.crit="نقد/تقييم";
 const mkBucket=t=>t==="crit"?"crit":t==="quote"?"quote":t==="question"?"question":"idea";
 function renderMk(){
@@ -1484,7 +1487,7 @@ function renderMk(){
     const b=bk(i.book),q=i.type==="quote";
     const body=i.html?'<div class="mk-body rtxt">'+cleanHtml(i.html)+"</div>":'<div class="mk-body">'+esc(i.text||"")+"</div>";
     return '<article class="mk-card'+(q?" quote":"")+'">'
-      +'<div class="mk-badges">'+(i.src?'<span class="mk-badge mk-b'+i.src+'">'+MKSRC[i.src]+"</span>":"")+'<span class="mk-badge mk-bsub">'+(MKT_SHORT[i.type]||"فكرة")+"</span></div>"
+      +'<div class="mk-badges">'+(i.src?'<span class="mk-badge mk-b'+i.src+'">'+MKSRC[i.src]+"</span>":"")+'<span class="mk-badge mk-bsub">'+(MKT_SHORT[i.type]||"فكرة")+"</span>"+'<span class="mk-acts"><button type="button" data-me="'+i.id+'" aria-label="تعديل الملاحظة">✎</button><button type="button" data-md="'+i.id+'" aria-label="مسح الملاحظة">🗑</button></span></div>'
       +(q?'<span class="mk-qmark">”</span>':"")
       +(i.title?'<b class="mk-title">'+esc(i.title)+"</b>":"")
       +body
@@ -1502,22 +1505,51 @@ function mkPaintForm(){
 $("mkTabsS").addEventListener("click",e=>{const b=e.target.closest("[data-ms]");if(b){mkSrc=b.dataset.ms;renderMk()}});
 $("mkTabsT").addEventListener("click",e=>{const b=e.target.closest("[data-mt]");if(b){mkType=b.dataset.mt;renderMk()}});
 $("mkBookChip").addEventListener("click",e=>{if(e.target.closest("#mkBookClear")){mkBookF="";renderMk()}});
-$("mkFeed").addEventListener("click",e=>{const b=e.target.closest("[data-mb]");if(b){mkBookF=b.dataset.mb;renderMk();scrollTo(0,0)}});
+function mkStartEdit(id){
+  const i=kb().items.find(x=>x.id===id);if(!i)return;
+  mkEditId=id;
+  mkFSrc=i.src||"mol";
+  mkFType=mkBucket(i.type);
+  mkPaintForm();
+  $("mkBook").value=i.book||"";
+  $("mkText").value=i.text||"";
+  $("mkMsg").textContent="";
+  $("mkSheet").querySelector("h2").textContent="عدّل ملاحظتك";
+  show("mkSheet");
+}
+function mkDel(id){
+  const i=kb().items.find(x=>x.id===id);if(!i)return;
+  if(!confirm("تمسح الملاحظة دي نهائي؟"))return;
+  kb().items=kb().items.filter(x=>x.id!==id);
+  save();renderMk();say("اتمسحت 🗑");
+}
+$("mkFeed").addEventListener("click",e=>{
+  const ed=e.target.closest("[data-me]");if(ed){mkStartEdit(ed.dataset.me);return}
+  const dl=e.target.closest("[data-md]");if(dl){mkDel(dl.dataset.md);return}
+  const b=e.target.closest("[data-mb]");if(b){mkBookF=b.dataset.mb;renderMk();scrollTo(0,0)}
+});
 $("mkStories").addEventListener("click",()=>{mkMode="story";renderAth({rebuild:1})});
 $("athFeed").addEventListener("click",()=>{mkMode="feed";renderMk()});
 $("mkGuideBtn").addEventListener("click",()=>show("mkGuide"));
 $("mkGuideClose").addEventListener("click",()=>closeAll());
-$("mkAdd").addEventListener("click",()=>{mkFSrc="mol";mkFType="idea";mkPaintForm();$("mkText").value="";$("mkMsg").textContent="";show("mkSheet")});
-$("mkCancel").addEventListener("click",()=>closeAll());
+$("mkAdd").addEventListener("click",()=>{mkEditId="";mkFSrc="mol";mkFType="idea";mkPaintForm();$("mkText").value="";$("mkMsg").textContent="";$("mkSheet").querySelector("h2").textContent="سجّل استفادتك";show("mkSheet")});
+$("mkCancel").addEventListener("click",()=>{mkEditId="";closeAll()});
 $("mkSrcs").addEventListener("click",e=>{const b=e.target.closest("[data-fs]");if(b){mkFSrc=b.dataset.fs;mkPaintForm()}});
 $("mkTypes").addEventListener("click",e=>{const b=e.target.closest("[data-ft]");if(b){mkFType=b.dataset.ft;mkPaintForm()}});
 $("mkSave").addEventListener("click",()=>{
   const t=$("mkText").value.trim();
   if(!t){$("mkMsg").textContent="اكتب ملاحظتك الأول.";return}
   const book=$("mkBook").value;
-  kb().items.push({id:nid(),type:mkFType,src:mkFSrc,title:"",text:t,book,session:"",date:keyOf(today()),ts:Date.now(),r:0});
+  let msg="اتحفظت في المفكرة ✅";
+  if(mkEditId){
+    const it=kb().items.find(x=>x.id===mkEditId);
+    if(it){it.type=mkFType;it.src=mkFSrc;it.text=t;it.book=book;delete it.html}
+    msg="اتعدّلت ✅";
+  }else{
+    kb().items.push({id:nid(),type:mkFType,src:mkFSrc,title:"",text:t,book,session:"",date:keyOf(today()),ts:Date.now(),r:0});
+  }
   if(book)touch(bk(book));
-  save();closeAll();mkSrc="all";mkType="all";renderMk();say("اتحفظت في المفكرة ✅");
+  save();mkEditId="";closeAll();mkSrc="all";mkType="all";renderMk();say(msg);
 });
 function bookOpts(sel,first){
   const el=$(sel),cur=el.value;
