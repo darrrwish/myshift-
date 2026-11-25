@@ -23,22 +23,27 @@ body{background:var(--page);color:var(--ink);font-family:system-ui,-apple-system
 body.dark .badge{background:#ECEDEF;color:#15161A}
 .badge .bw{display:block;font-size:7.5px;letter-spacing:1.5px;font-weight:700;opacity:.85}
 .badge .bn{display:block;font-size:19px;font-weight:800;line-height:1.1}
-.tailrow .dcol{display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;min-height:110px}
-.mlabel{transform:rotate(180deg);writing-mode:vertical-rl;font-size:9px;letter-spacing:3.5px;color:var(--mu);font-weight:600;text-transform:uppercase}
+.mhead{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;color:var(--ink);cursor:pointer;font-family:inherit;padding:14px 18px 10px 70px;text-align:left;position:relative;z-index:3}
+.mhead+.day .dband{border-top:0}
+.mhead .mn{font-size:11px;letter-spacing:2.5px;font-weight:700;text-transform:uppercase;color:var(--mu)}
+.mhead .mc{font-size:11px;color:var(--mu);background:var(--ln);border-radius:99px;padding:1px 8px}
+.mhead .chev{margin-left:auto;color:var(--mu);transition:transform .2s}
+.mhead .chev .icn{width:16px;height:16px}
+.mhead[aria-expanded=false] .chev{transform:rotate(-90deg)}
+.mhead:not(:first-child){border-top:1px solid var(--ln)}
+.tailsp{height:110px}
 .dband{flex:1;padding:6px 0 10px;min-width:0}
 .trow{display:flex;align-items:center;padding:9px 6px;cursor:pointer}
 .ttime{flex:none;width:60px;font-size:12px;color:var(--mu);text-align:left;font-weight:500}
 .tdc{flex:none;width:22px;display:flex;justify-content:center}
-.dot{width:9px;height:9px;border-radius:50%;z-index:2;position:relative}
-.dot.ring{width:13px;height:13px;background:var(--panel);border:3px solid #60A5FA}
-.ttext{flex:1;font-size:15px;line-height:1.5;overflow-wrap:anywhere;min-width:0}
+.ttext{flex:1;font-size:16px;line-height:1.5;overflow-wrap:anywhere;min-width:0}
 .trow.done .ttext{text-decoration:line-through;color:var(--done)}
 .trow.cur .ttime,.trow.cur .ttext{font-weight:800;color:var(--ink)}
 .tacts{flex:none;display:flex}
 .tacts button{border:0;background:none;color:var(--mu);cursor:pointer;padding:4px 3px;display:flex;align-items:center}
 .more{display:block;border:0;background:none;color:var(--mu);font-size:12px;padding:5px 10px 2px 94px;cursor:pointer;font-family:inherit;text-align:left;width:100%}
 .empty{color:var(--mu);font-size:13px;padding:16px 10px 8px 94px;line-height:1.8}
-#waveSvg{position:absolute;top:0;bottom:0;width:26px;z-index:1;pointer-events:none}
+#waveSvg{position:absolute;top:0;width:26px;overflow:visible;z-index:1;pointer-events:none}
 .icn{stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
 .floaty{position:fixed;bottom:16px;left:0;right:0;max-width:400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 14px;pointer-events:none;z-index:5;transition:bottom .22s ease}
 body.composer-open .floaty{bottom:76px}
@@ -72,7 +77,7 @@ body.dark #toast span{background:#ECEDEF;color:#15161A}
 <body>
 <div class="panel" id="panel">
   <div id="days"></div>
-  <svg id="waveSvg" preserveAspectRatio="none"></svg>
+  <svg id="waveSvg"></svg>
 </div>
 <div class="floaty">
   <div class="pill-bar"><button id="todayBtn" type="button" aria-label="Today"></button><button id="darkBtn" type="button" aria-label="Dark mode"></button></div>
@@ -115,6 +120,7 @@ trash:'<svg class="icn" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a2
 grid:'<svg class="icn" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
 moon:'<svg class="icn" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>',
 plus:'<svg class="icn" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+chev:'<svg class="icn" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
 up:'<svg class="icn" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'};
 $("todayBtn").innerHTML=I.grid;$("darkBtn").innerHTML=I.moon;$("fab").innerHTML=I.plus;$("sendBtn").innerHTML=I.up;
 
@@ -159,11 +165,20 @@ function currentId(){
   const past=t.filter(i=>(i.time||"99")<=now);
   return (past.length?past[past.length-1]:t[0]).id;
 }
+const MK="todoline-months";
+let monthOpen={};try{monthOpen=JSON.parse(localStorage.getItem(MK))||{}}catch(e){monthOpen={}}
+const monthIsOpen=m=>monthOpen[m]!=null?monthOpen[m]:m===keyOf(today()).slice(0,7);
 function render(){
   const days=daysWithItems(),tk=keyOf(today()),cur=currentId();
-  let html="";
+  let html="",lastM="";
+  const mcount={};days.forEach(g=>{const m=g.day.slice(0,7);mcount[m]=(mcount[m]||0)+g.items.length});
   days.forEach(g=>{
-    const d=parseKey(g.day),isT=g.day===tk;
+    const d=parseKey(g.day),isT=g.day===tk,m=g.day.slice(0,7),open=monthIsOpen(m);
+    if(m!==lastM){
+      lastM=m;
+      html+='<button type="button" class="mhead" data-mh="'+m+'" aria-expanded="'+open+'"><span class="mn">'+esc(fMY.format(d))+'</span><span class="mc">'+mcount[m]+'</span><span class="chev">'+I.chev+'</span></button>';
+    }
+    if(!open)return;
     html+='<div class="day" id="day-'+g.day+'"><div class="dcol">'
       +(isT?'<span class="badge"><span class="bw">TODAY</span><span class="bn">'+d.getDate()+"</span></span>"
            :'<span class="dw">'+esc(fW.format(d))+'</span><span class="dn">'+d.getDate()+"</span>")
@@ -172,7 +187,7 @@ function render(){
     g.items.slice(0,lim).forEach(i=>{
       html+='<div class="trow'+(i.done?" done":"")+(i.id===cur?" cur":"")+'" data-tid="'+i.id+'">'
         +'<span class="ttime">'+(i.time?esc(fmtTime(i.time)):"")+'</span>'
-        +'<span class="tdc"><span class="dot'+(i.id===cur?" ring":"")+'"'+(i.id===cur?"":' style="background:'+(i.done?"var(--donedot)":colorFor(i.id))+'"')+'></span></span>'
+        +'<span class="tdc"></span>'
         +'<span class="ttext" dir="auto">'+esc(i.text)+"</span>"
         +'<span class="tacts"><button type="button" data-te="'+i.id+'" aria-label="Edit">'+I.edit+'</button><button type="button" data-td="'+i.id+'" aria-label="Delete">'+I.trash+'</button></span></div>';
     });
@@ -180,50 +195,71 @@ function render(){
     if(!g.items.length&&isT)html+='<div class="empty">No tasks today. Tap + to add your first one.</div>';
     html+="</div></div>";
   });
-  html+='<div class="day tailrow"><div class="dcol"><span class="mlabel">'+esc(fMY.format(today()).toUpperCase())+'</span></div><div class="dband"></div></div>';
+  html+='<div class="tailsp"></div>';
   $("days").innerHTML=html;
   layoutWave();
 }
 function fmtTime(t){
   const p=t.split(":"),d=new Date();d.setHours(+p[0],+p[1],0,0);return fT.format(d);
 }
-/* one wavy line; every dot is translated onto the curve so it sits exactly on it */
+/* one wavy line. The dots are drawn in the SAME svg with the SAME function, so each dot is on the line by construction. */
 const WAVEF=y=>7*Math.sin(y/60);
-function layoutWave(){
-  requestAnimationFrame(()=>{
-    const panel=$("panel"),svg=$("waveSvg"),tk=keyOf(today());
-    const pr=panel.getBoundingClientRect();
-    const cells=[...panel.querySelectorAll(".tdc")];
-    if(!cells.length){svg.innerHTML="";return}
-    cells.forEach(c=>c.style.transform="");
-    const r0=cells[0].getBoundingClientRect();
-    const baseCx=r0.left-pr.left+r0.width/2;
-    cells.forEach(c=>{
-      const r=c.getBoundingClientRect();
-      const y=r.top-pr.top+r.height/2;
-      c.style.transform="translateX("+WAVEF(y).toFixed(1)+"px)";
-    });
-    svg.style.left=(baseCx-13)+"px";
-    const H=panel.offsetHeight;
-    svg.setAttribute("viewBox","0 0 26 "+H);
-    const wx=y=>13+WAVEF(y);
-    const todayEl=$("day-"+tk);
-    let yS0=0,yS1=0;
-    if(todayEl){
-      const rt=todayEl.getBoundingClientRect();
-      yS0=Math.max(0,rt.top-pr.top);
-      const more=todayEl.querySelector(".more");
-      const rb=(more||todayEl).getBoundingClientRect();
-      yS1=rb.bottom-pr.top-(more?28:0)+16;
+const STOPS=[[0,[239,68,68]],[.5,[20,184,166]],[1,[167,139,250]]];
+function lineColor(t){
+  t=Math.max(0,Math.min(1,t));
+  for(let i=1;i<STOPS.length;i++){
+    if(t<=STOPS[i][0]){
+      const a=STOPS[i-1],b=STOPS[i],f=(t-a[0])/(b[0]-a[0]);
+      return "rgb("+[0,1,2].map(k=>Math.round(a[1][k]+(b[1][k]-a[1][k])*f)).join(",")+")";
     }
-    const path=(a,b)=>{let d="M "+wx(a).toFixed(1)+" "+a.toFixed(1);for(let y=a+12;y<=b;y+=12)d+=" L "+wx(y).toFixed(1)+" "+y;return d};
-    let inner='<defs><linearGradient id="wg" gradientUnits="userSpaceOnUse" x1="0" y1="'+yS0+'" x2="0" y2="'+Math.max(yS1,yS0+1)+'">'
-      +'<stop offset="0" stop-color="#EF4444"/><stop offset=".5" stop-color="#14B8A6"/><stop offset="1" stop-color="#A78BFA"/></linearGradient></defs>';
-    if(yS0>10)inner+='<path d="'+path(-6,yS0)+'" stroke="var(--donedot)" stroke-width="2" fill="none" stroke-dasharray="2.5 6" stroke-linecap="round"/>';
-    if(yS1>yS0)inner+='<path d="'+path(yS0,yS1)+'" stroke="url(#wg)" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
-    inner+='<path d="'+path(yS1+10,H-120)+'" stroke="var(--donedot)" stroke-width="2" fill="none" stroke-dasharray="2.5 6" stroke-linecap="round"/>';
-    svg.innerHTML=inner;
+  }
+  return "rgb(167,139,250)";
+}
+let layoutRaf=0;
+function layoutWave(){
+  cancelAnimationFrame(layoutRaf);
+  layoutRaf=requestAnimationFrame(doLayout);
+}
+function doLayout(){
+  const panel=$("panel"),svg=$("waveSvg"),tk=keyOf(today());
+  const dpr=window.devicePixelRatio||1;
+  const pr=panel.getBoundingClientRect();
+  const dEl=$("days").getBoundingClientRect();const H=Math.round(Math.min(panel.scrollHeight,dEl.bottom-pr.top-40));
+  const c0=panel.querySelector(".tdc");
+  let baseCx=139;
+  if(c0){const r=c0.getBoundingClientRect();baseCx=r.left-pr.left+r.width/2}
+  const left=Math.round((baseCx-13)*dpr)/dpr;
+  svg.style.left=left+"px";svg.style.height=H+"px";svg.style.width="26px";
+  svg.setAttribute("width",26);svg.setAttribute("height",H);svg.setAttribute("viewBox","0 0 26 "+H);
+  const wx=y=>13+WAVEF(y);
+  const todayEl=$("day-"+tk);
+  let yS0=0,yS1=0;
+  if(todayEl){
+    const rt=todayEl.getBoundingClientRect();
+    yS0=Math.max(0,rt.top-pr.top);
+    yS1=rt.bottom-pr.top;
+  }
+  const path=(a,b)=>{let d="M "+wx(a).toFixed(2)+" "+a.toFixed(2);for(let y=a+4;y<b;y+=4)d+=" L "+wx(y).toFixed(2)+" "+y.toFixed(2);d+=" L "+wx(b).toFixed(2)+" "+b.toFixed(2);return d};
+  const hasT=!!todayEl&&yS1>yS0;
+  let inner="";
+  if(hasT)inner+='<defs><linearGradient id="wg" gradientUnits="userSpaceOnUse" x1="0" y1="'+yS0+'" x2="0" y2="'+yS1+'">'
+    +'<stop offset="0" stop-color="rgb(239,68,68)"/><stop offset=".5" stop-color="rgb(20,184,166)"/><stop offset="1" stop-color="rgb(167,139,250)"/></linearGradient></defs>';
+  const dotted='stroke="var(--donedot)" stroke-width="2" fill="none" stroke-dasharray="2.5 6" stroke-linecap="round"';
+  if(hasT){
+    if(yS0>10)inner+='<path d="'+path(-6,yS0)+'" '+dotted+'/>';
+    inner+='<path d="'+path(yS0,yS1)+'" stroke="url(#wg)" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+    inner+='<path d="'+path(yS1,H)+'" '+dotted+'/>';
+  }else inner+='<path d="'+path(-6,H)+'" '+dotted+'/>';
+  const cur=panel.querySelector(".trow.cur");
+  panel.querySelectorAll(".trow").forEach(row=>{
+    const r=row.getBoundingClientRect();
+    const y=r.top-pr.top+r.height/2;
+    const inT=hasT&&y>=yS0&&y<=yS1;
+    const col=inT?lineColor((y-yS0)/(yS1-yS0)):"var(--donedot)";
+    if(row===cur)inner+='<circle cx="'+wx(y).toFixed(2)+'" cy="'+y.toFixed(2)+'" r="5.5" fill="var(--panel)" stroke="'+col+'" stroke-width="3"/>';
+    else inner+='<circle cx="'+wx(y).toFixed(2)+'" cy="'+y.toFixed(2)+'" r="4.5" fill="'+col+'"/>';
   });
+  svg.innerHTML=inner;
 }
 function scrollToday(){const el=$("day-"+keyOf(today()));if(el)el.scrollIntoView({block:"start"})}
 
@@ -242,10 +278,11 @@ $("composer").addEventListener("submit",e=>{
   const p=parseMsg(raw);
   if(!p.text){$("tin").value="";return}
   state.items.push({id:nid(),text:p.text,day:p.day,time:p.time||nowTime(),ts:Date.now(),done:false});
-  save();$("tin").value="";expanded[p.day]=true;render();
+  save();$("tin").value="";expanded[p.day]=true;monthOpen[p.day.slice(0,7)]=true;try{localStorage.setItem(MK,JSON.stringify(monthOpen))}catch(x){}render();
   const el=$("day-"+p.day);if(el)el.scrollIntoView({block:"center"});
 });
 $("days").addEventListener("click",e=>{
+  const mh=e.target.closest("[data-mh]");if(mh){const m=mh.dataset.mh;monthOpen[m]=!monthIsOpen(m);try{localStorage.setItem(MK,JSON.stringify(monthOpen))}catch(x){}render();return}
   const mx=e.target.closest("[data-mx]");if(mx){expanded[mx.dataset.mx]=true;render();return}
   const ed=e.target.closest("[data-te]");if(ed){openEdit(ed.dataset.te);return}
   const dl=e.target.closest("[data-td]");
@@ -279,7 +316,9 @@ let toastT=null;
 function toast(m){$("toast").hidden=false;$("toast").querySelector("span").textContent=m;clearTimeout(toastT);toastT=setTimeout(()=>$("toast").hidden=true,1800)}
 $("darkBtn").addEventListener("click",()=>{state.dark=!state.dark;document.body.classList.toggle("dark",state.dark);save()});
 $("todayBtn").addEventListener("click",scrollToday);
-addEventListener("resize",layoutWave);
+addEventListener("resize",layoutWave);addEventListener("orientationchange",layoutWave);addEventListener("load",layoutWave);
+if(window.ResizeObserver)new ResizeObserver(layoutWave).observe($("days"));
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layoutWave);
 if(location.protocol.startsWith("http")&&navigator.serviceWorker)navigator.serviceWorker.register("./sw.js").catch(()=>{});
 render();scrollToday();
 </script>
