@@ -2029,16 +2029,16 @@ async function fetchFeed(url){
   return b;
 }
 async function pageText(url){
-  const px=[u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u)];
-  for(const p of px){try{const r=await fetch(p(url),{signal:tmo(9000)});if(!r.ok)continue;const t=textFromPage(await r.text());if(t)return t}catch(e){}}
-  return"";
+  const px=[u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://corsproxy.io/?url="+encodeURIComponent(u)];
+  try{return await Promise.any(px.map(async p=>{const r=await fetch(p(url),{signal:tmo(22000)});if(!r.ok)throw new Error("px");const t=textFromPage(await r.text());if(!t)throw new Error("empty");return t}))}catch(e){return""}
 }
 function ensureFull(i){
   if(!i||i.f||!okUrl(i.l))return Promise.resolve(!!(i&&i.f));
   if(i._p)return i._p;
   i._p=(async()=>{
-    if(i.fu){try{const k=normL(i.l),m=(await morssFull(i.fu)).find(x=>normL(x.l)===k&&x.f);if(m&&m.c){i.c=m.c;i.f=1;return true}}catch(e){}}
-    const t=await pageText(i.l);if(t&&t.length>Math.max(FULL_MIN,(i.c||"").length*1.2)){i.c=t;i.f=1;return true}
+    const viaM=(async()=>{if(!i.fu)throw 0;const k=normL(i.l),m=(await morssFull(i.fu)).find(x=>normL(x.l)===k&&x.f);if(!m||!m.c)throw 0;return m.c})();
+    const viaP=(async()=>{const t=await pageText(i.l);if(!t||t.length<=Math.max(FULL_MIN,(i.c||"").length*1.2))throw 0;return t})();
+    try{const t=await Promise.any([viaM,viaP]);i.c=t;i.f=1;return true}catch(e){}
     i._p=null;return false})();
   return i._p;
 }
