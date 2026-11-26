@@ -1986,9 +1986,9 @@ async function fetchFeedBase(url){
 const FULL_MIN=500;
 const normL=u=>{try{const x=new URL(u);let p=x.pathname;try{p=decodeURIComponent(p)}catch(_){}return x.hostname.replace(/^www\./,"")+p.replace(/\/+$/,"")}catch(_){return String(u||"")}};
 function tmo(ms){const c=new AbortController();setTimeout(()=>c.abort(),ms);return c.signal}
-function parasOf(root){
+function parasOf(root,simple){
   const out=[];
-  root.querySelectorAll("p,h2,h3,h4,li,blockquote").forEach(n=>{
+  root.querySelectorAll(simple?"p,h2,h3,h4":"p,h2,h3,h4,li,blockquote").forEach(n=>{
     if(n.closest("figure,figcaption,nav,aside,footer,form,button,.related,.share"))return;
     if(n.tagName==="BLOCKQUOTE"&&n.querySelector("p"))return;
     if(n.tagName==="LI"&&n.querySelector("p"))return;
@@ -2013,7 +2013,8 @@ function textFromPage(html){
   const cands=direct?[direct]:[...d.querySelectorAll("article,main,section,div")];
   cands.forEach(c=>{let sc=0;for(const p of c.querySelectorAll(":scope > p, :scope > div > p")){const l=p.textContent.trim().length;if(l>40)sc+=l}if(sc>bs){bs=sc;best=c}});
   if(!best||bs<FULL_MIN)return"";
-  return parasOf(best);
+  let r=parasOf(best,1);if(r.length<FULL_MIN)r=parasOf(best);
+  const ps=r.split("\n\n"),k=ps.findIndex(p=>p.length>=80);return (k>0?ps.slice(k):ps).join("\n\n");
 }
 async function morssFull(url){
   const r=await fetch("https://morss.it/:format=json:cors/"+url,{signal:tmo(14000)});if(!r.ok)throw new Error("morss "+r.status);
