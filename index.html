@@ -711,6 +711,9 @@ body.reels{overflow:hidden}
 
 .v5-capture textarea,#answerSheet textarea{font:inherit;line-height:1.9}
 
+#v6Install,#v6InstallHelp{display:none!important}
+#nrMore{pointer-events:auto;margin-top:12px;background:transparent;color:#fff;border:1px solid #fff9;border-radius:999px;padding:9px 20px;font:inherit;font-weight:600;cursor:pointer}
+#nsF{width:100%;margin:0 0 10px}
 </style>
 </head>
 <body>
@@ -818,7 +821,7 @@ body.reels{overflow:hidden}
     <div class="nr-media" id="nrMedia"></div><div class="nr-shade"></div>
     <div class="nr-top"><div class="nr-bars" id="nrBars" aria-hidden="true"></div><div class="nr-head"><span class="nr-avatar">ن</span><div class="nr-source"><b id="nrSource"></b><small id="nrCount"></small></div><button type="button" class="nr-icon" id="nrMute" aria-label="تشغيل صوت الفيديو" hidden>♪</button><button type="button" class="nr-icon" id="nrPause" aria-label="إيقاف مؤقت">Ⅱ</button><button type="button" class="nr-icon" id="nrClose" aria-label="إغلاق الريلز">×</button></div></div>
     <button type="button" class="nr-zone nr-prev" id="nrPrev" aria-label="الخبر السابق"></button><button type="button" class="nr-zone nr-next" id="nrNext" aria-label="الخبر التالي"></button>
-    <div class="nr-copy" id="nrCopy"><div class="nr-reading" id="nrReading"><div class="nr-status" id="nrStatus" role="status"></div><h2 id="nrTitle"></h2><p id="nrText"></p></div><div class="nr-actions"><a id="nrLink" target="_blank" rel="noopener noreferrer" title="فتح مصدر الخبر" aria-label="فتح مصدر الخبر"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg></a><button type="button" id="nrSave" title="حفظ الخبر لمدة ٧ أيام" aria-label="حفظ الخبر لمدة ٧ أيام"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-4-6 4z"/></svg></button></div></div>
+    <div class="nr-copy" id="nrCopy"><div class="nr-reading" id="nrReading"><div class="nr-status" id="nrStatus" role="status"></div><h2 id="nrTitle"></h2><p id="nrText"></p><button type="button" id="nrMore" hidden>قراءة المزيد</button></div><div class="nr-actions"><a id="nrLink" target="_blank" rel="noopener noreferrer" title="فتح مصدر الخبر" aria-label="فتح مصدر الخبر"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg></a><button type="button" id="nrSave" title="حفظ الخبر لمدة ٧ أيام" aria-label="حفظ الخبر لمدة ٧ أيام"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-4-6 4z"/></svg></button></div></div>
   </div>
 </div>
 <div class="sheet" id="artSheet" role="dialog" aria-modal="true" aria-label="مقال جديد" hidden>
@@ -871,6 +874,7 @@ body.reels{overflow:hidden}
   <div class="grip"></div><h2 id="nsT"></h2><small class="ks" id="nsM" style="display:block"></small>
   <img id="nsI" alt="" hidden referrerpolicy="no-referrer">
   <div class="nsb" id="nsB"></div>
+  <button class="btn" id="nsF" type="button" hidden>اقرأ كامل</button>
   <div class="r2"><a class="btn" id="nsL" target="_blank" rel="noopener noreferrer">فتح المصدر</a><button class="btn" id="nsS" type="button">حفظ الخبر</button></div>
   <button class="btn dn" id="nsC" type="button">إغلاق</button>
 </div>
@@ -2020,12 +2024,9 @@ async function morssFull(url){
   });
 }
 async function fetchFeed(url){
-  const [b,m]=await Promise.allSettled([fetchFeedBase(url),morssFull(url)]);
-  const mi=m.status==="fulfilled"?m.value:[],bi=b.status==="fulfilled"?b.value:[];
-  if(!mi.length&&!bi.length)throw new Error("empty");
-  const seen=new Set(mi.map(i=>normL(i.l)));
-  mi.forEach(i=>{if(!i.img&&!i.video){const o=bi.find(x=>normL(x.l)===normL(i.l));if(o){i.img=o.img;i.video=o.video}}});
-  return mi.concat(bi.filter(i=>!seen.has(normL(i.l))));
+  const b=await fetchFeedBase(url);
+  b.forEach(i=>{i.fu=url});
+  return b;
 }
 async function pageText(url){
   const px=[u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u)];
@@ -2035,7 +2036,10 @@ async function pageText(url){
 function ensureFull(i){
   if(!i||i.f||!okUrl(i.l))return Promise.resolve(!!(i&&i.f));
   if(i._p)return i._p;
-  i._p=(async()=>{const t=await pageText(i.l);if(t&&t.length>Math.max(FULL_MIN,(i.c||"").length*1.2)){i.c=t;i.f=1;return true}i._p=null;return false})();
+  i._p=(async()=>{
+    if(i.fu){try{const k=normL(i.l),m=(await morssFull(i.fu)).find(x=>normL(x.l)===k&&x.f);if(m&&m.c){i.c=m.c;i.f=1;return true}}catch(e){}}
+    const t=await pageText(i.l);if(t&&t.length>Math.max(FULL_MIN,(i.c||"").length*1.2)){i.c=t;i.f=1;return true}
+    i._p=null;return false})();
   return i._p;
 }
 function renderNewsList(items){
@@ -2099,14 +2103,26 @@ $("nad").addEventListener("click",()=>{
   const x={id:nid(),name:n||new URL(u).hostname,url:u};feeds().push(x);save();resetFeedForm();renderFeedSet();fsay("اتضاف ✓");if(state.view==="n")renderNews();
 });
 let curN=null;
-$("nls").addEventListener("click",e=>{
-  const b=e.target.closest("button[data-n]"),i=b&&window._news&&window._news[b.dataset.n];if(!i)return;
+function openNews(i){
   curN=i;markNewsRead(i);$("nsT").textContent=i.t;$("nsM").textContent=[i.src,fmtD(i.d)].filter(Boolean).join(" · ");
   const im=$("nsI");if(okUrl(i.img)){im.src=i.img;im.hidden=false}else{im.hidden=true;im.removeAttribute("src")}
   $("nsB").textContent=i.c||i.s||"مفيش تفاصيل في الخبر ده، افتح المصدر.";
-  if(!i.f&&okUrl(i.l)){const j=i,mk="\n\n… جاري تحميل الخبر كامل";$("nsB").textContent+=mk;ensureFull(j).then(ok=>{if(curN===j&&!$("newsSheet").hidden)$("nsB").textContent=j.c||j.s||"مفيش تفاصيل في الخبر ده، افتح المصدر."})}
+  const f=$("nsF");f.hidden=!!i.f||!okUrl(i.l);f.disabled=false;f.textContent="اقرأ كامل";
   const a=$("nsL");if(okUrl(i.l)){a.href=i.l;a.hidden=false}else a.hidden=true;
   const sv=$("nsS");sv.disabled=false;sv.textContent=isSaved(i)?"إزالة من المحفوظات":"حفظ الخبر";show("newsSheet");$("newsSheet").scrollTop=0;
+}
+$("nls").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-n]"),i=b&&window._news&&window._news[b.dataset.n];if(!i)return;
+  openNews(i);
+});
+$("nsF").addEventListener("click",()=>{
+  const j=curN,f=$("nsF");if(!j||j.f)return;
+  f.disabled=true;f.textContent="جاري تحميل الخبر كامل...";
+  ensureFull(j).then(ok=>{
+    if(curN!==j||$("newsSheet").hidden)return;
+    if(ok){$("nsB").textContent=j.c;f.hidden=true}
+    else{f.disabled=false;f.textContent="ماقدرتش أجيب الخبر كامل، جرّب تاني أو افتح المصدر"}
+  });
 });
 $("nsS").addEventListener("click",()=>{
   if(!curN)return;
@@ -2118,7 +2134,7 @@ $("nsS").addEventListener("click",()=>{
     if(state.view==="n"&&nf()==="saved")loadNews();
     return;
   }
-  s.unshift({id:nid(),t:String(curN.t||"").slice(0,200),l:okUrl(curN.l)?curN.l:"",d:curN.d||"",s:String(curN.s||"").slice(0,600),c:String(curN.c||curN.s||"").slice(0,20000),f:curN.f?1:0,img:okUrl(curN.img)?curN.img:"",video:okUrl(curN.video)?curN.video:"",src:curN.src||"",at:Date.now()});
+  s.unshift({id:nid(),t:String(curN.t||"").slice(0,200),l:okUrl(curN.l)?curN.l:"",d:curN.d||"",s:String(curN.s||"").slice(0,600),fu:curN.fu||"",c:String(curN.c||curN.s||"").slice(0,20000),f:curN.f?1:0,img:okUrl(curN.img)?curN.img:"",video:okUrl(curN.video)?curN.video:"",src:curN.src||"",at:Date.now()});
   save();$("nsS").textContent="اتحفظ ✓ (اضغط للإزالة)";
 });
 
@@ -2137,7 +2153,7 @@ function nrRender(){
   if(nrVideo)nrVideo.pause();nrVideo=null;nrElapsed=0;nrLast=0;nrHold=false;
   const i=nrItems[nrIndex];$("nrReading").scrollTop=0;markNewsRead(i);state.newsResume={key:newsKey(i),feed:nf(),index:nrIndex};save();$("nrSource").textContent=i.src||"الأخبار";$("nrCount").textContent="خبر "+(nrIndex+1)+" من "+nrItems.length+(i.d?" · "+fmtD(i.d):"");
   $("nrTitle").textContent=i.t||"خبر";$("nrText").textContent=i.c||i.s||"التفاصيل عند المصدر.";$("nrStatus").textContent="";
-  if(!i.f&&okUrl(i.l))ensureFull(i).then(ok=>{if(ok&&nrOpen()&&nrItems[nrIndex]===i)$("nrText").textContent=i.c});
+  {const imgOnly=okUrl(i.img)&&!okUrl(i.video);$("nrText").hidden=imgOnly;$("nrMore").hidden=!imgOnly;if(!i.f&&okUrl(i.l)&&!imgOnly)$("nrText").textContent=i.c||i.s||"التفاصيل عند المصدر."}
   nrSetSaveLabel(i);
   const a=$("nrLink");a.hidden=!okUrl(i.l);if(!a.hidden)a.href=i.l;else a.removeAttribute('href');
   $("nrBars").innerHTML=nrItems.map((_,n)=>'<span class="nr-bar"><i style="width:'+(n<nrIndex?100:0)+'%"></i></span>').join('');
@@ -2159,6 +2175,7 @@ function nrTick(t){
   if(nrOpen())nrRAF=requestAnimationFrame(nrTick);
 }
 $("newsPlay").addEventListener('click',()=>{nrItems=(window._news||[]).slice();if(!nrItems.length)return;nrReturn=document.activeElement;const resume=state.newsResume||{},savedIndex=nrItems.findIndex(i=>newsKey(i)===resume.key);nrIndex=savedIndex>=0?savedIndex:(resume.feed===nf()&&Number.isInteger(resume.index)?Math.max(0,Math.min(resume.index,nrItems.length-1)):0);nrPaused=false;nrHold=false;$("newsPlayer").hidden=false;document.body.classList.add('news-playing');nrRender();$("nrClose").focus();cancelAnimationFrame(nrRAF);nrRAF=requestAnimationFrame(nrTick)});
+$("nrMore").onclick=()=>{const i=nrItems[nrIndex];if(!i)return;nrClose();openNews(i)};
 $("nrClose").onclick=nrClose;$("nrPrev").onclick=()=>nrStep(-1);$("nrNext").onclick=()=>nrStep(1);
 $("nrPause").onclick=()=>{nrPaused=!nrPaused;nrUpdatePause()};
 $("nrMute").onclick=()=>{nrMuted=!nrMuted;if(nrVideo)nrVideo.muted=nrMuted;$("nrMute").textContent=nrMuted?"♪":"♫";$("nrMute").setAttribute('aria-label',nrMuted?'تشغيل صوت الفيديو':'كتم صوت الفيديو')};
