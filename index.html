@@ -1961,7 +1961,7 @@ function newsMedia(html,enclosures=[],base=""){
   if(!img&&im)img=abs(im.getAttribute('src'));
   return{img,video};
 }
-async function fetchFeed(url){
+async function fetchFeedBase(url){
   try{
     const r=await fetch("https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url));const j=await r.json();
     if(j.status==="ok")return j.items.map(i=>{const m=newsMedia((i.content||"")+" "+(i.description||""),[i.enclosure||{}],url);return{t:i.title,l:i.link,d:i.pubDate,s:plain(i.description),c:longer(rich(i.description),rich(i.content)),img:okUrl(i.thumbnail)?i.thumbnail:m.img,video:m.video}});
@@ -1974,6 +1974,66 @@ async function fetchFeed(url){
     return{t:g('title'),l:(ln&&(ln.getAttribute('href')||ln.textContent))||'',d:g('pubDate')||g('updated'),s:plain(desc),c:longer(rich(desc),rich(content)),img:m.img,video:m.video};
   });
   if(!it.length)throw new Error("empty");return it;
+}
+
+/* Full-text news: morss.it gives clean full articles (first items of each feed); the rest are read from the article page on demand. */
+const FULL_MIN=500;
+const normL=u=>{try{const x=new URL(u);let p=x.pathname;try{p=decodeURIComponent(p)}catch(_){}return x.hostname.replace(/^www\./,"")+p.replace(/\/+$/,"")}catch(_){return String(u||"")}};
+function tmo(ms){const c=new AbortController();setTimeout(()=>c.abort(),ms);return c.signal}
+function parasOf(root){
+  const out=[];
+  root.querySelectorAll("p,h2,h3,h4,li,blockquote").forEach(n=>{
+    if(n.closest("figure,figcaption,nav,aside,footer,form,button,.related,.share"))return;
+    if(n.tagName==="BLOCKQUOTE"&&n.querySelector("p"))return;
+    if(n.tagName==="LI"&&n.querySelector("p"))return;
+    const t=n.textContent.replace(/[ \t\u00a0]+/g," ").trim();
+    if(!t||t.length<2)return;
+    if(/^(h2|h3|h4)$/i.test(n.tagName)&&t.length>120)return;
+    out.push((n.tagName==="LI"?"• ":"")+t);
+  });
+  const seen=new Set();return out.filter(t=>{if(seen.has(t))return false;seen.add(t);return true}).join("\n\n");
+}
+function textFromMorss(html){
+  const d=new DOMParser().parseFromString(html||"","text/html");
+  d.querySelectorAll("script,style,iframe,noscript,svg").forEach(n=>n.remove());
+  return parasOf(d.body);
+}
+function textFromPage(html){
+  const d=new DOMParser().parseFromString(html||"","text/html");
+  d.querySelectorAll("script,style,iframe,noscript,svg,nav,header,footer,aside,form,select,button,[class*=comment],[class*=related],[class*=share],[id*=comment]").forEach(n=>n.remove());
+  let best=null,bs=0;
+  const direct=d.querySelector("[itemprop=articleBody]");
+  const cands=direct?[direct]:[...d.querySelectorAll("article,main,section,div")];
+  cands.forEach(c=>{let sc=0;for(const p of c.querySelectorAll(":scope > p, :scope > div > p")){const l=p.textContent.trim().length;if(l>40)sc+=l}if(sc>bs){bs=sc;best=c}});
+  if(!best||bs<FULL_MIN)return"";
+  return parasOf(best);
+}
+async function morssFull(url){
+  const r=await fetch("https://morss.it/:format=json:cors/"+url,{signal:tmo(14000)});if(!r.ok)throw new Error("morss "+r.status);
+  const j=await r.json();
+  return (j.items||[]).filter(i=>i&&i.title&&okUrl(i.url)).map(i=>{
+    const t=textFromMorss(i.content),sh=plain(i.desc),m=newsMedia(i.content||"",[],url),full=t.length>=300&&t.length>sh.length*1.5;
+    return{t:plain(i.title),l:i.url,d:i.time||"",s:sh,c:full?t:longer(rich(i.desc),t),f:full?1:0,img:m.img,video:m.video};
+  });
+}
+async function fetchFeed(url){
+  const [b,m]=await Promise.allSettled([fetchFeedBase(url),morssFull(url)]);
+  const mi=m.status==="fulfilled"?m.value:[],bi=b.status==="fulfilled"?b.value:[];
+  if(!mi.length&&!bi.length)throw new Error("empty");
+  const seen=new Set(mi.map(i=>normL(i.l)));
+  mi.forEach(i=>{if(!i.img&&!i.video){const o=bi.find(x=>normL(x.l)===normL(i.l));if(o){i.img=o.img;i.video=o.video}}});
+  return mi.concat(bi.filter(i=>!seen.has(normL(i.l))));
+}
+async function pageText(url){
+  const px=[u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://corsproxy.io/?"+encodeURIComponent(u)];
+  for(const p of px){try{const r=await fetch(p(url),{signal:tmo(12000)});if(!r.ok)continue;const t=textFromPage(await r.text());if(t)return t}catch(e){}}
+  return"";
+}
+function ensureFull(i){
+  if(!i||i.f||!okUrl(i.l))return Promise.resolve(!!(i&&i.f));
+  if(i._p)return i._p;
+  i._p=(async()=>{const t=await pageText(i.l);if(t&&t.length>Math.max(FULL_MIN,(i.c||"").length*1.2)){i.c=t;i.f=1;return true}i._p=null;return false})();
+  return i._p;
 }
 function renderNewsList(items){
   $("newsPlay").disabled=!items.length;
@@ -2041,6 +2101,7 @@ $("nls").addEventListener("click",e=>{
   curN=i;markNewsRead(i);$("nsT").textContent=i.t;$("nsM").textContent=[i.src,fmtD(i.d)].filter(Boolean).join(" · ");
   const im=$("nsI");if(okUrl(i.img)){im.src=i.img;im.hidden=false}else{im.hidden=true;im.removeAttribute("src")}
   $("nsB").textContent=i.c||i.s||"مفيش تفاصيل في الخبر ده، افتح المصدر.";
+  if(!i.f&&okUrl(i.l)){const j=i,mk="\n\n… جاري تحميل الخبر كامل";$("nsB").textContent+=mk;ensureFull(j).then(ok=>{if(curN===j&&!$("newsSheet").hidden)$("nsB").textContent=j.c||j.s||"مفيش تفاصيل في الخبر ده، افتح المصدر."})}
   const a=$("nsL");if(okUrl(i.l)){a.href=i.l;a.hidden=false}else a.hidden=true;
   const sv=$("nsS");sv.disabled=false;sv.textContent=isSaved(i)?"إزالة من المحفوظات":"حفظ الخبر";show("newsSheet");$("newsSheet").scrollTop=0;
 });
@@ -2054,7 +2115,7 @@ $("nsS").addEventListener("click",()=>{
     if(state.view==="n"&&nf()==="saved")loadNews();
     return;
   }
-  s.unshift({id:nid(),t:String(curN.t||"").slice(0,200),l:okUrl(curN.l)?curN.l:"",d:curN.d||"",s:String(curN.s||"").slice(0,600),c:String(curN.c||curN.s||"").slice(0,6000),img:okUrl(curN.img)?curN.img:"",video:okUrl(curN.video)?curN.video:"",src:curN.src||"",at:Date.now()});
+  s.unshift({id:nid(),t:String(curN.t||"").slice(0,200),l:okUrl(curN.l)?curN.l:"",d:curN.d||"",s:String(curN.s||"").slice(0,600),c:String(curN.c||curN.s||"").slice(0,20000),f:curN.f?1:0,img:okUrl(curN.img)?curN.img:"",video:okUrl(curN.video)?curN.video:"",src:curN.src||"",at:Date.now()});
   save();$("nsS").textContent="اتحفظ ✓ (اضغط للإزالة)";
 });
 
@@ -2073,6 +2134,7 @@ function nrRender(){
   if(nrVideo)nrVideo.pause();nrVideo=null;nrElapsed=0;nrLast=0;nrHold=false;
   const i=nrItems[nrIndex];$("nrReading").scrollTop=0;markNewsRead(i);state.newsResume={key:newsKey(i),feed:nf(),index:nrIndex};save();$("nrSource").textContent=i.src||"الأخبار";$("nrCount").textContent="خبر "+(nrIndex+1)+" من "+nrItems.length+(i.d?" · "+fmtD(i.d):"");
   $("nrTitle").textContent=i.t||"خبر";$("nrText").textContent=i.c||i.s||"التفاصيل عند المصدر.";$("nrStatus").textContent="";
+  if(!i.f&&okUrl(i.l))ensureFull(i).then(ok=>{if(ok&&nrOpen()&&nrItems[nrIndex]===i)$("nrText").textContent=i.c});
   nrSetSaveLabel(i);
   const a=$("nrLink");a.hidden=!okUrl(i.l);if(!a.hidden)a.href=i.l;else a.removeAttribute('href');
   $("nrBars").innerHTML=nrItems.map((_,n)=>'<span class="nr-bar"><i style="width:'+(n<nrIndex?100:0)+'%"></i></span>').join('');
