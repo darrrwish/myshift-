@@ -1,5 +1,5 @@
 /* Change this cache version on each release. Never store private app data here. */
-const CACHE='almihwar-shell-v22-20261126';
+const CACHE='almihwar-shell-v23-20261126';
 const ROOT=new URL('./',self.location.href).href;
 const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
 self.addEventListener('install',event=>{
