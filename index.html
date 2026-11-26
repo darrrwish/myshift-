@@ -1991,6 +1991,7 @@ function parasOf(root){
     if(/^(h2|h3|h4)$/i.test(n.tagName)&&t.length>120)return;
     out.push((n.tagName==="LI"?"• ":"")+t);
   });
+  const cut=out.findIndex(t=>/^(اكتشف المزيد|مقاطع قصيرة|نهاية مقاطع قصيرة)$/.test(t));if(cut>2)out.length=cut;
   const seen=new Set();return out.filter(t=>{if(seen.has(t))return false;seen.add(t);return true}).join("\n\n");
 }
 function textFromMorss(html){
@@ -2025,8 +2026,8 @@ async function fetchFeed(url){
   return mi.concat(bi.filter(i=>!seen.has(normL(i.l))));
 }
 async function pageText(url){
-  const px=[u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://corsproxy.io/?"+encodeURIComponent(u)];
-  for(const p of px){try{const r=await fetch(p(url),{signal:tmo(12000)});if(!r.ok)continue;const t=textFromPage(await r.text());if(t)return t}catch(e){}}
+  const px=[u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u)];
+  for(const p of px){try{const r=await fetch(p(url),{signal:tmo(9000)});if(!r.ok)continue;const t=textFromPage(await r.text());if(t)return t}catch(e){}}
   return"";
 }
 function ensureFull(i){
